@@ -1,7 +1,7 @@
 #include "cloudpch.h"
 
 #include "CloudServer.h"
-#include "Log.h"
+#include "Core/Log.h"
 
 CloudServer* CloudServer::instance = nullptr;
 

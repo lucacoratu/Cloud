@@ -1,60 +1,39 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;c++;cppm;ixx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;h++;hm;inl;inc;ipp;xsd</Extensions>
-    </Filter>
-    <Filter Include="Resource Files">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
-    </Filter>
-    <Filter Include="Precompiled Header">
-      <UniqueIdentifier>{0e84040e-b4ba-4682-8810-e87f22e81c5f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Core">
-      <UniqueIdentifier>{d38d6a68-1c88-43d2-893b-122d99ae8eaa}</UniqueIdentifier>
+      <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
     </Filter>
     <Filter Include="Core\Connection">
-      <UniqueIdentifier>{34405d50-13c5-40f2-a142-f67e1fa71168}</UniqueIdentifier>
+      <UniqueIdentifier>{CDBB6D45-3947-DB09-4258-5EFEAE62370A}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="cloudpch.cpp">
-      <Filter>Precompiled Header</Filter>
-    </ClCompile>
-    <ClCompile Include="Log.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="TCPListener.cpp">
+    <ClInclude Include="src\Core\Connection\CloudServer.h">
       <Filter>Core\Connection</Filter>
-    </ClCompile>
-    <ClCompile Include="CloudServer.cpp">
+    </ClInclude>
+    <ClInclude Include="src\Core\Connection\TCPListener.h">
       <Filter>Core\Connection</Filter>
-    </ClCompile>
+    </ClInclude>
+    <ClInclude Include="src\Core\Core.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Log.h">
+      <Filter>Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cloudpch.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="cloudpch.h">
-      <Filter>Precompiled Header</Filter>
-    </ClInclude>
-    <ClInclude Include="Log.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="Core.h">
-      <Filter>Core</Filter>
-    </ClInclude>
-    <ClInclude Include="TCPListener.h">
+    <ClCompile Include="src\Core\Connection\CloudServer.cpp">
       <Filter>Core\Connection</Filter>
-    </ClInclude>
-    <ClInclude Include="CloudServer.h">
+    </ClCompile>
+    <ClCompile Include="src\Core\Connection\TCPListener.cpp">
       <Filter>Core\Connection</Filter>
-    </ClInclude>
+    </ClCompile>
+    <ClCompile Include="src\Core\Log.cpp">
+      <Filter>Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cloudpch.cpp" />
+    <ClCompile Include="src\main.cpp" />
   </ItemGroup>
 </Project>
