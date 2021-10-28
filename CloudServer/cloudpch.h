@@ -4,6 +4,7 @@
 //Precompiled header
 #include <iostream>
 #include <string>
+#include <sstream>
 
 //Algorithms
 #include <algorithm>

@@ -1,0 +1,3 @@
+[submodule "CloudServer/External/spdlog"]
+	path = CloudServer/External/spdlog
+	url = https://github.com/gabime/spdlog
