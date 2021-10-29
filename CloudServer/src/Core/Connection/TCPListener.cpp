@@ -3,9 +3,6 @@
 
 #include "Core/Log.h"
 
-#define _WINSOCK_DEPRECATED_NO_WARNINGS
-#define _CRT_SECURE_NO_WARNINGS
-
 int TcpListener::init()
 {
 	SV_INFO("Server is initializing...");
@@ -108,7 +105,7 @@ int TcpListener::run()
 					onClientConnected(client);
 					});
 
-				//th2.join();
+				th2.join();
 			}
 			else // It's an inbound message
 			{
@@ -179,7 +176,7 @@ int TcpListener::run()
 	return 0;
 }
 
-//Trimite mesaj unui utilizator pe baza socket-ului
+//Send the message to the client
 void TcpListener::sendToClient(uint32_t clientSocket, const char* msg, size_t length)
 {
 	send(clientSocket, msg, static_cast<int>(length), 0);

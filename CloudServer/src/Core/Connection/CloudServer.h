@@ -14,7 +14,7 @@ private:
 		TcpListener(ipAddress, port) {
 	}
 
-	~CloudServer() { }
+	~CloudServer() { /*Clear all of the data */ }
 protected:
 
 	// Handler for a new connection

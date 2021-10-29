@@ -1,39 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Core">
-      <UniqueIdentifier>{2EB4837C-1AEB-840D-C3D7-6A10AFED000F}</UniqueIdentifier>
+    <Filter Include="External">
+      <UniqueIdentifier>{089DB854-F469-1360-1D83-010809AF48EE}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Core\Connection">
-      <UniqueIdentifier>{CDBB6D45-3947-DB09-4258-5EFEAE62370A}</UniqueIdentifier>
+    <Filter Include="External\sqlite">
+      <UniqueIdentifier>{A9E3C0CD-156F-2E92-1E80-B1868A8A8A92}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2DAB880B-99B4-887C-2230-9F7C8E38947C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Core">
+      <UniqueIdentifier>{A5D31CCF-91A0-77DA-BAB9-6582A6E5AC68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Core\Connection">
+      <UniqueIdentifier>{E4E2D55F-5044-B36D-D9B1-F91F4512EA2C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Core\Database">
+      <UniqueIdentifier>{2928D943-953E-D7D9-DEB5-62FB4A0BA861}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Core\Database\Queries">
+      <UniqueIdentifier>{561B02FA-C2DD-3584-0B8E-C410778F0E62}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Errors">
+      <UniqueIdentifier>{5925810E-45DD-C25B-AEE4-9BB79ABB5D4C}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Message">
+      <UniqueIdentifier>{E1A63828-4D5C-B11D-D650-ABF44205A821}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Connection\CloudServer.h">
-      <Filter>Core\Connection</Filter>
+      <Filter>src\Core\Connection</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Connection\TCPListener.h">
-      <Filter>Core\Connection</Filter>
+      <Filter>src\Core\Connection</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Core.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Database\DatabaseAPI.h">
+      <Filter>src\Core\Database</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Database\Queries\Queries.h">
+      <Filter>src\Core\Database\Queries</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Log.h">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClInclude>
-    <ClInclude Include="src\cloudpch.h" />
+    <ClInclude Include="src\Core\RequestManager.h">
+      <Filter>src\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Errors\Error.h">
+      <Filter>src\Errors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Errors\ErrorCodes.h">
+      <Filter>src\Errors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Errors\ErrorManager.h">
+      <Filter>src\Errors</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Message\Action.h">
+      <Filter>src\Message</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Message\Message.h">
+      <Filter>src\Message</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Message\MessageCreator.h">
+      <Filter>src\Message</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Message\MessageParser.h">
+      <Filter>src\Message</Filter>
+    </ClInclude>
+    <ClInclude Include="src\cloudpch.h">
+      <Filter>src</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="External\sqlite\sqlite3.c">
+      <Filter>External\sqlite</Filter>
+    </ClCompile>
     <ClCompile Include="src\Core\Connection\CloudServer.cpp">
-      <Filter>Core\Connection</Filter>
+      <Filter>src\Core\Connection</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Connection\TCPListener.cpp">
-      <Filter>Core\Connection</Filter>
+      <Filter>src\Core\Connection</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Database\DatabaseAPI.cpp">
+      <Filter>src\Core\Database</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Database\Queries\Queries.cpp">
+      <Filter>src\Core\Database\Queries</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Log.cpp">
-      <Filter>Core</Filter>
+      <Filter>src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\cloudpch.cpp" />
-    <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\Core\RequestManager.cpp">
+      <Filter>src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Errors\Error.cpp">
+      <Filter>src\Errors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Errors\ErrorCodes.cpp">
+      <Filter>src\Errors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Errors\ErrorManager.cpp">
+      <Filter>src\Errors</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Message\Action.cpp">
+      <Filter>src\Message</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Message\Message.cpp">
+      <Filter>src\Message</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Message\MessageCreator.cpp">
+      <Filter>src\Message</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Message\MessageParser.cpp">
+      <Filter>src\Message</Filter>
+    </ClCompile>
+    <ClCompile Include="src\cloudpch.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

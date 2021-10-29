@@ -1,0 +1,16 @@
+#ifndef ERRORCODES_H
+#define ERRORCODES_H
+
+enum class ErrorCodes {
+	NO_ERROR_FOUND = 0,
+	USERNAME_ALREADY_USED = 1,
+};
+
+
+enum class ServerErrorCodes {
+	NO_ERROR_FOUND = 0,
+	COULD_NOT_CHECK_USERNAME_DUPLICATION = 1,
+	COULD_NOT_INSERT_ACCOUNT_INTO_DATABASE = 2,
+};
+
+#endif

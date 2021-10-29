@@ -15,7 +15,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{9238FB1F-1C02-41F5-A4AF-9E5927B38EEF}</ProjectGuid>
+    <ProjectGuid>{33D5EDDD-9F8A-66D3-287F-60AA94335DD7}</ProjectGuid>
     <IgnoreWarnCompileDuplicatedFilename>true</IgnoreWarnCompileDuplicatedFilename>
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>CloudServer</RootNamespace>
@@ -55,22 +55,22 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <OutDir>bin\Debug-windows-x86_64\</OutDir>
-    <IntDir>bin\Debug-windows-x86_64\</IntDir>
+    <OutDir>..\bin\CloudServer\Debug-windows-x86_64\</OutDir>
+    <IntDir>..\bin-int\CloudServer\Debug-windows-x86_64\</IntDir>
     <TargetName>CloudServer</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\Release-windows-x86_64\</OutDir>
-    <IntDir>bin\Release-windows-x86_64\</IntDir>
+    <OutDir>..\bin\CloudServer\Release-windows-x86_64\</OutDir>
+    <IntDir>..\bin-int\CloudServer\Release-windows-x86_64\</IntDir>
     <TargetName>CloudServer</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Distribution|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>bin\Distribution-windows-x86_64\</OutDir>
-    <IntDir>bin\Distribution-windows-x86_64\</IntDir>
+    <OutDir>..\bin\CloudServer\Distribution-windows-x86_64\</OutDir>
+    <IntDir>..\bin-int\CloudServer\Distribution-windows-x86_64\</IntDir>
     <TargetName>CloudServer</TargetName>
     <TargetExt>.exe</TargetExt>
   </PropertyGroup>
@@ -79,8 +79,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>cloudpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>SV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>External\spdlog\include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SV_WINDOWS;SV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -96,8 +96,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>cloudpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>SV_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>External\spdlog\include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SV_WINDOWS;SV_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -117,8 +117,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>cloudpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <PreprocessorDefinitions>SV_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>External\spdlog\include;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>SV_WINDOWS;SV_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -137,13 +137,36 @@
     <ClInclude Include="src\Core\Connection\CloudServer.h" />
     <ClInclude Include="src\Core\Connection\TCPListener.h" />
     <ClInclude Include="src\Core\Core.h" />
+    <ClInclude Include="src\Core\Database\DatabaseAPI.h" />
+    <ClInclude Include="src\Core\Database\Queries\Queries.h" />
     <ClInclude Include="src\Core\Log.h" />
+    <ClInclude Include="src\Core\RequestManager.h" />
+    <ClInclude Include="src\Errors\Error.h" />
+    <ClInclude Include="src\Errors\ErrorCodes.h" />
+    <ClInclude Include="src\Errors\ErrorManager.h" />
+    <ClInclude Include="src\Message\Action.h" />
+    <ClInclude Include="src\Message\Message.h" />
+    <ClInclude Include="src\Message\MessageCreator.h" />
+    <ClInclude Include="src\Message\MessageParser.h" />
     <ClInclude Include="src\cloudpch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="External\sqlite\sqlite3.c">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Core\Connection\CloudServer.cpp" />
     <ClCompile Include="src\Core\Connection\TCPListener.cpp" />
+    <ClCompile Include="src\Core\Database\DatabaseAPI.cpp" />
+    <ClCompile Include="src\Core\Database\Queries\Queries.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
+    <ClCompile Include="src\Core\RequestManager.cpp" />
+    <ClCompile Include="src\Errors\Error.cpp" />
+    <ClCompile Include="src\Errors\ErrorCodes.cpp" />
+    <ClCompile Include="src\Errors\ErrorManager.cpp" />
+    <ClCompile Include="src\Message\Action.cpp" />
+    <ClCompile Include="src\Message\Message.cpp" />
+    <ClCompile Include="src\Message\MessageCreator.cpp" />
+    <ClCompile Include="src\Message\MessageParser.cpp" />
     <ClCompile Include="src\cloudpch.cpp">
       <PrecompiledHeader>Create</PrecompiledHeader>
     </ClCompile>

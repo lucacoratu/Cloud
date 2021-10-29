@@ -1,10 +1,10 @@
 #ifndef TCPLISTENER_H
 #define TCPLISTENER_H
 
-#include <WS2tcpip.h>
-#pragma comment (lib, "ws2_32.lib")
-
 #include "Core/Log.h"
+#include "Core/Core.h"
+
+#include "Core/Database/DatabaseAPI.h"
 
 class TcpListener
 {
@@ -14,6 +14,9 @@ public:
 		s_ipAddress(ipAddress), s_port(port), s_socket(0) {
 		//Initialize the log class
 		Log::init();
+
+		//Inititalize the database
+		DatabaseAPI::InitDatabase("./Database/cloud_database.db");
 
 		//Inititalize the member variables
 		this->master = { 0 };
@@ -45,8 +48,6 @@ protected:
 
 	//Sending message to all clients
 	void broadcastToClients(uint32_t sendingClient, const char* msg, int length);
-
-
 private:
 
 	const char* s_ipAddress;					// Adresa IP a serverului 
