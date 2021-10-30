@@ -80,7 +80,7 @@
       <PrecompiledHeaderFile>cloudpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SV_WINDOWS;SV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;External\SHA256\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -97,7 +97,7 @@
       <PrecompiledHeaderFile>cloudpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SV_WINDOWS;SV_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;External\SHA256\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -118,7 +118,7 @@
       <PrecompiledHeaderFile>cloudpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SV_WINDOWS;SV_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;External\SHA256\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -134,11 +134,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\Clients\ClientData.h" />
     <ClInclude Include="src\Core\Connection\CloudServer.h" />
     <ClInclude Include="src\Core\Connection\TCPListener.h" />
     <ClInclude Include="src\Core\Core.h" />
     <ClInclude Include="src\Core\Database\DatabaseAPI.h" />
     <ClInclude Include="src\Core\Database\Queries\Queries.h" />
+    <ClInclude Include="src\Core\Encryption\HashingAPI.h" />
     <ClInclude Include="src\Core\Log.h" />
     <ClInclude Include="src\Core\RequestManager.h" />
     <ClInclude Include="src\Errors\Error.h" />
@@ -151,13 +153,18 @@
     <ClInclude Include="src\cloudpch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="External\SHA256\src\SHA256.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="External\sqlite\sqlite3.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Core\Clients\ClientData.cpp" />
     <ClCompile Include="src\Core\Connection\CloudServer.cpp" />
     <ClCompile Include="src\Core\Connection\TCPListener.cpp" />
     <ClCompile Include="src\Core\Database\DatabaseAPI.cpp" />
     <ClCompile Include="src\Core\Database\Queries\Queries.cpp" />
+    <ClCompile Include="src\Core\Encryption\HashingAPI.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
     <ClCompile Include="src\Core\RequestManager.cpp" />
     <ClCompile Include="src\Errors\Error.cpp" />

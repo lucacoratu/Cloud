@@ -25,14 +25,16 @@ project "CloudServer"
 	{
 		"%{prj.location}/src/**.h",
 		"%{prj.location}/src/**.cpp",
-		"%{prj.location}/External/sqlite/sqlite3.c"
+		"%{prj.location}/External/sqlite/sqlite3.c",
+		"%{prj.location}/External/SHA256/src/SHA256.cpp"
 	}
 
 	includedirs
 	{
 		"%{prj.location}/External/spdlog/include",
 		"%{prj.location}/External/sqlite",
-		"%{prj.location}/src"
+		"%{prj.location}/src",
+		"%{prj.location}/External/SHA256/include"
 	}
 
 	filter "system:windows"
@@ -56,6 +58,10 @@ project "CloudServer"
 	--Filters the .c files and sets their precompiled header option to Not using precompiled headers
 	filter "files:**.c"
 		flags {"NoPCH"}
+
+	--The tokens do not work in the filter section so the relative path from the premake5.lua file to the SHA256 file should be hardcoded
+	filter "files:CloudServer/External/SHA256/src/**.cpp"
+		flags {"NOPCH"}
 
 project "CloudClient"
 	location "%{prj.name}"

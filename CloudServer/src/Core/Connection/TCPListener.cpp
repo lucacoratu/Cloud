@@ -156,6 +156,9 @@ int TcpListener::run()
 
 	}
 
+	//Close the database connection
+	DatabaseAPI::CloseDatabaseConnection();
+
 	// Remove the listening socket from the master file descriptor set and close it
 	// to prevent anyone else trying to connect.
 	FD_CLR(s_socket, &master);

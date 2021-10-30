@@ -7,6 +7,7 @@ class MessageCreator {
 private:
 	static Message LastMessage;
 public:
+	static void CreateWelcomeMessage();
 	static void CreateMessage(Action action, char errorNo, std::string data);
 	static const std::string GetLastMessageAsString();
 };

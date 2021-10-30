@@ -63,7 +63,7 @@ int DatabaseAPI::InitDatabase(const std::string& databaseFilename)
 	*/
 	
 	//Open the database if it exists 
-	int open_error = sqlite3_open_v2(databaseFilename.c_str(), &database,SQLITE_OPEN_READWRITE, nullptr);
+	int open_error = sqlite3_open_v2(databaseFilename.c_str(), &database, SQLITE_OPEN_READWRITE, nullptr);
 	
 	//The database could not be found
 	if (open_error != SQLITE_OK) {

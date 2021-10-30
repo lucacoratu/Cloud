@@ -1,11 +1,12 @@
 #ifndef DATABASEAPI_H
 #define DATABASEAPI_H
 
-#include "sqlite3.h"
+#include <sqlite3.h>
 
 /* 
 *	This class will be the API over the sqlite database 
 */
+
 class DatabaseAPI {
 private:
 	//Pointer to the database
@@ -18,7 +19,7 @@ public:
 	//Intitializes the database if it exists else it creates an empty database
 	static int InitDatabase(const std::string& databaseFilename);
 
-	//Clears the database connection
+	//Closes the database connection
 	static void CloseDatabaseConnection();
 
 	//Adds a new entry to the database with the new account

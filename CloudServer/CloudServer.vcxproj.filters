@@ -4,6 +4,12 @@
     <Filter Include="External">
       <UniqueIdentifier>{089DB854-F469-1360-1D83-010809AF48EE}</UniqueIdentifier>
     </Filter>
+    <Filter Include="External\SHA256">
+      <UniqueIdentifier>{505C1D80-BCE7-8A44-C5F8-0D393103E744}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="External\SHA256\src">
+      <UniqueIdentifier>{67C22ECD-D323-0CDB-5C91-528DC8F1429A}</UniqueIdentifier>
+    </Filter>
     <Filter Include="External\sqlite">
       <UniqueIdentifier>{A9E3C0CD-156F-2E92-1E80-B1868A8A8A92}</UniqueIdentifier>
     </Filter>
@@ -12,6 +18,9 @@
     </Filter>
     <Filter Include="src\Core">
       <UniqueIdentifier>{A5D31CCF-91A0-77DA-BAB9-6582A6E5AC68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\Core\Clients">
+      <UniqueIdentifier>{E61A9B59-D213-BAAB-FB45-9F30E79D99B7}</UniqueIdentifier>
     </Filter>
     <Filter Include="src\Core\Connection">
       <UniqueIdentifier>{E4E2D55F-5044-B36D-D9B1-F91F4512EA2C}</UniqueIdentifier>
@@ -22,6 +31,9 @@
     <Filter Include="src\Core\Database\Queries">
       <UniqueIdentifier>{561B02FA-C2DD-3584-0B8E-C410778F0E62}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Core\Encryption">
+      <UniqueIdentifier>{9FCC1530-0B2E-F33D-949B-39F000FC29FD}</UniqueIdentifier>
+    </Filter>
     <Filter Include="src\Errors">
       <UniqueIdentifier>{5925810E-45DD-C25B-AEE4-9BB79ABB5D4C}</UniqueIdentifier>
     </Filter>
@@ -30,6 +42,9 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\Core\Clients\ClientData.h">
+      <Filter>src\Core\Clients</Filter>
+    </ClInclude>
     <ClInclude Include="src\Core\Connection\CloudServer.h">
       <Filter>src\Core\Connection</Filter>
     </ClInclude>
@@ -44,6 +59,9 @@
     </ClInclude>
     <ClInclude Include="src\Core\Database\Queries\Queries.h">
       <Filter>src\Core\Database\Queries</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Core\Encryption\HashingAPI.h">
+      <Filter>src\Core\Encryption</Filter>
     </ClInclude>
     <ClInclude Include="src\Core\Log.h">
       <Filter>src\Core</Filter>
@@ -77,8 +95,14 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="External\SHA256\src\SHA256.cpp">
+      <Filter>External\SHA256\src</Filter>
+    </ClCompile>
     <ClCompile Include="External\sqlite\sqlite3.c">
       <Filter>External\sqlite</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Clients\ClientData.cpp">
+      <Filter>src\Core\Clients</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Connection\CloudServer.cpp">
       <Filter>src\Core\Connection</Filter>
@@ -91,6 +115,9 @@
     </ClCompile>
     <ClCompile Include="src\Core\Database\Queries\Queries.cpp">
       <Filter>src\Core\Database\Queries</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Core\Encryption\HashingAPI.cpp">
+      <Filter>src\Core\Encryption</Filter>
     </ClCompile>
     <ClCompile Include="src\Core\Log.cpp">
       <Filter>src\Core</Filter>

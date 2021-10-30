@@ -1,8 +1,8 @@
 #include "cloudpch.h"
-
 #include "CloudServer.h"
-#include "Core/Log.h"
+
 #include "Message/MessageParser.h"
+#include "Core/RequestManager.h"
 
 CloudServer* CloudServer::instance = nullptr;
 
@@ -33,15 +33,13 @@ void CloudServer::onClientConnected(uint32_t clientSocket)
 	//Send the public key to the client
 	//this->sendToClient(clientSocket, publicKey, DH_KEY_LENGTH + 1);
 	//SV_INFO("Public key was sent to client");
-	std::string hello = "Salut de la server!";
-	SV_INFO("Client connected to server, socket: {0}", clientSocket);
-	this->sendToClient(clientSocket, hello, hello.size());
+	std::string welcome_message = RequestManager::NewClientConnected(clientSocket);
+	this->sendToClient(clientSocket, welcome_message, welcome_message.size());
 }
 
 void CloudServer::onClientDisconnected(uint32_t clientSocket)
 {
-	SV_INFO("Client disconnected, socket: {0}", clientSocket);
-
+	RequestManager::ClientDisconnected(clientSocket);
 	//When a client disconnects from the server
 	//this->actionHandler.clientDisconnected(clientSocket);
 }
@@ -73,7 +71,7 @@ void CloudServer::onMessageReceived(uint32_t clientSocket, std::string& msg, int
 		result = plain;
 		break;
 	default:
-		SV_ERROR("Unsupported request from client, socket {0}", clientSocket);
+		SV_WARN("Unsupported request from client, socket {0}", clientSocket);
 		result = "";
 		break;
 	}
