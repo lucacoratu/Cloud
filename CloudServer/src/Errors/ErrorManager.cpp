@@ -1,12 +1,11 @@
 #include "cloudpch.h"
 #include "ErrorManager.h"
 
-#include "Core/Log.h"
+#include "Core/Core.h"
 
 std::string ErrorManager::errorsFilename = std::string();
-std::map<short, Error*> ErrorManager::errors = std::map<short, Error*>();
+std::map<int, Error*> ErrorManager::errors = std::map<int, Error*>();
 bool ErrorManager::errorsInitialized = false;
-
 
 void ErrorManager::Init(const std::string& filename)
 {
@@ -33,15 +32,24 @@ void ErrorManager::Init(const std::string& filename)
     in.close();
 }
 
-const Error& ErrorManager::GetError(short code)
+const Error& ErrorManager::GetError(int code)
 {
     //Returns the error and it's details based on the error code
     return *errors[code];
 }
 
-void ErrorManager::HandleError(const short& code)
+const std::string ErrorManager::GetErrorDetails(const ErrorCodes& code)
 {
-    SV_ERROR("ERROR: Code: {0}, Details: {1}", code, errors[code]->GetErrorDetails());
+    //Returns the error details string
+    if (CONVERT_ERROR(code) < 255)
+        return errors[static_cast<short>(code)]->GetErrorDetails();
+    else
+        return "Try again later!";
+}
+
+void ErrorManager::HandleError(const int& code)
+{
+    SV_WARN("ERROR: Code: {0}, Details: {1}", code, errors[code]->GetErrorDetails());
 }
 
 //Clears the errors from the error manager and the filename

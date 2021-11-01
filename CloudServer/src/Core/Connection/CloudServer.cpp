@@ -70,6 +70,9 @@ void CloudServer::onMessageReceived(uint32_t clientSocket, std::string& msg, int
 		//Client requests the server to send back the message that he sent
 		result = plain;
 		break;
+	case Action::REGISTER_ACCOUNT:
+		result = RequestManager::RegisterNewAccount(MessageParser::GetMessageTokens());
+		break;
 	default:
 		SV_WARN("Unsupported request from client, socket {0}", clientSocket);
 		result = "";

@@ -1,6 +1,8 @@
 #ifndef ERROR_H
 #define ERROR_H
 
+#include "Errors/ErrorCodes.h"
+
 class Error {
 private:
 	//Member variables

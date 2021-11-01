@@ -3,6 +3,7 @@
 
 //Empty message
 Message MessageParser::LastMessage = Message();
+std::vector<std::string> MessageParser::MessageTokens = std::vector<std::string>();
 
 void MessageParser::CreateMessageFromString(const std::string& data)
 {
@@ -47,6 +48,14 @@ const std::string& MessageParser::GetMessageData()
 
 const std::vector<std::string>& MessageParser::GetMessageTokens(const char delim)
 {
-	// TODO: insert return statement here
-	return std::vector<std::string>();
+	//Breaks the LastMessage data into tokens
+	size_t count = 0;
+	for (auto ch : LastMessage.GetData()) {
+		if (ch == delim) {
+			MessageTokens.push_back(std::string());
+			count++;
+		}
+		MessageTokens[count] += ch;
+	}
+	return MessageTokens;
 }

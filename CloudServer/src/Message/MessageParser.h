@@ -8,6 +8,7 @@ class MessageParser {
 private:
 	//Memeber variables
 	static Message LastMessage;
+	static std::vector<std::string> MessageTokens;
 public:
 	//Functions
 	static void CreateMessageFromString(const std::string& data);

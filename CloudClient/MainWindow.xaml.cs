@@ -13,7 +13,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-
 namespace CloudClient
 {
     /// <summary>
@@ -25,7 +24,7 @@ namespace CloudClient
         {
             InitializeComponent();
 
-            src.Connection.Socket.ConnectToServer("127.0.0.1", 54000);
+            //src.Connection.Socket.ConnectToServer("127.0.0.1", 54000);
         }
 
         private void TextBlock_Click(object sender, RoutedEventArgs e)

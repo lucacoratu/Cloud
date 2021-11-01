@@ -7,15 +7,16 @@ class ErrorManager {
 private:
 	//Static member variables
 	static std::string errorsFilename;
-	static std::map<short, Error*> errors;
+	static std::map<int, Error*> errors;
 	static bool errorsInitialized;
 public:
 	//Functions
 
 	//Static Functions
 	static void Init(const std::string& filename);
-	static const Error& GetError(short code);
-	static void HandleError(const short& code);
+	static const Error& GetError(int code);
+	static const std::string GetErrorDetails(const ErrorCodes& code);
+	static void HandleError(const int& code);
 
 	//Clear function
 	static void DeleteErrorManager();

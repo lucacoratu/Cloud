@@ -1,7 +1,6 @@
 #include "cloudpch.h"
 #include "MessageCreator.h"
 
-#include "Errors/ErrorCodes.h"
 
 Message MessageCreator::LastMessage = Message();
 
@@ -13,6 +12,26 @@ void MessageCreator::CreateWelcomeMessage()
     std::string welcome_message = "Welcome from the cloud server!";
     LastMessage.SetHeader(static_cast<char>(Action::NO_ACTION), static_cast<char>(ErrorCodes::NO_ERROR_FOUND), static_cast<int>(welcome_message.size()));
     LastMessage.SetData(welcome_message);
+}
+
+void MessageCreator::CreateRegisterCompletedMessage()
+{
+    /*
+    * Creates a success message if the account registration has been successful 
+    */
+    std::string register_successful = "Your account has been registered successfully!";
+    LastMessage.SetHeader(static_cast<char>(Action::NO_ACTION), static_cast<char>(ErrorCodes::NO_ERROR_FOUND), static_cast<int>(register_successful.size()));
+    LastMessage.SetData(register_successful);
+}
+
+void MessageCreator::CreateRegisterFailedMessage(const ErrorCodes& code)
+{
+    /*
+    * Creates a message with the afferent error codeand data field, if the register account fails
+    */
+    std::string message_data = ErrorManager::GetErrorDetails(code);
+    LastMessage.SetHeader(static_cast<char>(Action::NO_ACTION), static_cast<char>(code), message_data.size());
+    LastMessage.SetData(message_data);
 }
 
 void MessageCreator::CreateMessage(Action action, char errorNo, std::string data)
