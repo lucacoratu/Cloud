@@ -11,7 +11,7 @@ namespace CloudClient.src.Connection
         //Member variables
         static TcpClient client;
         static NetworkStream stream;
-
+        static Byte[] serverAnswer;
         static public void ConnectToServer(string serverIpAddress, Int32 port)
         {
             try
@@ -30,9 +30,13 @@ namespace CloudClient.src.Connection
 
                 // Read the first batch of the TcpServer response bytes.
                 Int32 bytes = stream.Read(data, 0, data.Length);
-                responseData = System.Text.Encoding.ASCII.GetString(data, 0, bytes);
+                serverAnswer = data;
 
-                MessageBox.Show(responseData,"Response", MessageBoxButton.OK);
+                //responseData = System.Text.Encoding.ASCII.GetString(serverAnswer, 3, bytes);
+                //DEBUG ONLY...REMOVE LATER!!!
+                //string ServerData = new string(responseData.Substring(3));
+                //byte[] SvData = System.Text.Encoding.ASCII.GetBytes(ServerData);
+                //MessageBox.Show(responseData, "Response", MessageBoxButton.OK);
             }
             catch (ArgumentNullException e)
             {
@@ -42,6 +46,25 @@ namespace CloudClient.src.Connection
             {
                 MessageBox.Show("Cannot connect to the server");
             }
+        }
+
+        static public Byte[] GetServerAnswer()
+        {
+            return serverAnswer;
+        }
+
+        static public void SendToServer(Byte[] data, int dataLength)
+        {
+            //Sends the byte array to the server
+            try
+            {
+                stream.Write(data, 0, dataLength);
+                int bytesRead = stream.Read(serverAnswer, 0, 256);
+            }
+            catch(ArgumentNullException e){
+                MessageBox.Show(e.Message, "Error::Socket.SendToServer", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+
         }
     }
 }

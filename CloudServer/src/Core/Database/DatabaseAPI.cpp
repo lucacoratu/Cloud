@@ -128,3 +128,32 @@ int DatabaseAPI::AddAccountToDatabase(const std::string& username, const std::st
 
 	return static_cast<int>(ServerErrorCodes::NO_ERROR_FOUND);
 }
+
+bool DatabaseAPI::CheckCredentials(const std::string& username, const std::string& hashedPassword)
+{
+	/*
+	* Checks if the credentials given by the client can be found in the database
+	* If they can be found it means the account exists (login successful) 
+	*/
+
+	sqlite3_stmt* result = nullptr;
+
+	//Prepare the sqlite statement to be executed 
+	int select_result = sqlite3_prepare_v2(database, CheckCredentialsQuery(username, hashedPassword).GetQueryCharPtr(), -1, &result, 0);
+	//Check if the preparation was successful
+	if (select_result != SQLITE_OK) {
+		SV_WARN("Could not execute the select statement to check if an username is already used! Username: {0}, Database path: {1}", username, databaseRelativePath);
+		return false;
+	}
+
+	//If it was successful
+	select_result = sqlite3_step(result);
+	//Check if the credentials can be found in the database
+	if (select_result == SQLITE_ROW) {
+		//The credentials exist
+		return true;
+	}
+
+	//The credentials could not be found so the login failed
+	return false;
+}

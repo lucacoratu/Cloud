@@ -28,6 +28,11 @@ SelectAccountQuery::SelectAccountQuery(const std::string& username)
 
 }
 
+CheckCredentialsQuery::CheckCredentialsQuery(const std::string& username, const std::string& hashedPassword)
+	: Query("SELECT * FROM Accounts WHERE Username = \'" + username + "\' and Password = \'" + hashedPassword + "\';")
+{
+
+}
 
 
 //INSERTION QUERIES
@@ -41,3 +46,5 @@ RegisterAccountQuery::RegisterAccountQuery(const std::string& username, const st
 
 
 //DELETE QUERIES
+
+

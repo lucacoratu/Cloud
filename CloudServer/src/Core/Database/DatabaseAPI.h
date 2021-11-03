@@ -24,6 +24,9 @@ public:
 
 	//Adds a new entry to the database with the new account
 	static int AddAccountToDatabase(const std::string& username, const std::string& hashedPassword);
+
+	//Checks the credentials of the user for login
+	static bool CheckCredentials(const std::string& username, const std::string& hashedPassword);
 };
 
 #endif

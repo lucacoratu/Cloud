@@ -34,6 +34,16 @@ void MessageCreator::CreateRegisterFailedMessage(const ErrorCodes& code)
     LastMessage.SetData(message_data);
 }
 
+void MessageCreator::CreateLoginFailedMessage()
+{
+    /*
+    * Creates the message for when the login fails
+    */
+    std::string message_data = "Login failed, try again later!";
+    LastMessage.SetHeader(static_cast<char>(Action::NO_ACTION), static_cast<char>(0), message_data.size());
+    LastMessage.SetData(message_data);
+}
+
 void MessageCreator::CreateMessage(Action action, char errorNo, std::string data)
 {
     /*

@@ -8,7 +8,7 @@ struct MessageHeader {
 	char action;
 	//An error code that can be used by the client to display a certain
 	char errorNo;
-	int dataLegth;
+	int dataLength;
 };
 
 //Message Header: | action(1 bytes) | errorNo (1 byte) | dataLength(4 bytes) | data (dataLength bytes) |  

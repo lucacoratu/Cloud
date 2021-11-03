@@ -11,6 +11,7 @@ public:
 	static void CreateWelcomeMessage();
 	static void CreateRegisterCompletedMessage();
 	static void CreateRegisterFailedMessage(const ErrorCodes& code);
+	static void CreateLoginFailedMessage();
 	static void CreateMessage(Action action, char errorNo, std::string data);
 	static const std::string GetLastMessageAsString();
 };

@@ -110,11 +110,11 @@ int TcpListener::run()
 			else // It's an inbound message
 			{
 				std::thread th3([&]() {
-					char buf[4096];
-					ZeroMemory(buf, 4096);
+					const unsigned int MAX_BUF_LENGTH = 1024;
+					std::vector<char> buffer(MAX_BUF_LENGTH);
 
 					// Receive message
-					int bytesIn = recv(sock, buf, 4096, 0);
+					int bytesIn = recv(sock, &buffer[0], static_cast<int>(buffer.size()), 0);
 					if (bytesIn <= 0)
 					{
 						// Drop the client
@@ -122,14 +122,14 @@ int TcpListener::run()
 						closesocket(sock);
 						FD_CLR(sock, &this->master);
 					}
-					else {
+					else if (bytesIn == 1024) {
 						const unsigned int MAX_BUF_LENGTH = 1024;
 						std::vector<char> buffer(MAX_BUF_LENGTH);
 						std::string rcv;
 						int bytesReceived = 0;
 
 						do {
-							bytesReceived = recv(sock, &buffer[0], static_cast<int>(buffer.size()), MSG_WAITALL);
+							bytesReceived = recv(sock, &buffer[0], static_cast<int>(buffer.size()), 0);
 							// append string from buffer.
 							if (bytesReceived <= 0) {
 								// Drop the client
@@ -146,6 +146,12 @@ int TcpListener::run()
 						onMessageReceived(sock, rcv, static_cast<int>(rcv.size()));
 						rcv.clear();
 						return;
+					}
+					else {
+						std::string rcv;
+						rcv.append(buffer.cbegin(), buffer.cend());
+						onMessageReceived(sock, rcv, static_cast<int>(rcv.size()));
+						rcv.clear();
 					}
 
 				});

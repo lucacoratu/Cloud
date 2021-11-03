@@ -5,6 +5,11 @@
 Message MessageParser::LastMessage = Message();
 std::vector<std::string> MessageParser::MessageTokens = std::vector<std::string>();
 
+static union { char c[4]; unsigned long mylong; } endian_test = { { 'l', '?', '?', 'b' } };
+#define ENDIANNESS ((char)endian_test.mylong)
+
+
+
 void MessageParser::CreateMessageFromString(const std::string& data)
 {
 	//Creates a message from a string given and stores it in the LastMessage static variable
@@ -13,9 +18,25 @@ void MessageParser::CreateMessageFromString(const std::string& data)
 	header.action = data[0];
 	header.errorNo = data[1];
 	//Convert the 4 bytes starting from data[2] into an integer
-	std::string dataLength = data.substr(2, 6);
-	header.dataLegth = atoi(dataLength.data());
-	std::string dataStr = data.substr(6);
+	std::string dataLength = data.substr(2, 4);
+	
+	std::string dataLengthLittle = "";
+	int* aux = NULL;
+
+	if (ENDIANNESS == 'l') { /* little endian */
+		//printf("Little endian");
+		for (int i = 3; i >= 0; i--) {
+			dataLengthLittle += dataLength[i];
+		}
+		aux = (int*)dataLengthLittle.c_str();
+	}
+
+	if (ENDIANNESS == 'b') { /* big endian */
+		aux = (int*)dataLength.c_str();
+	}
+
+	header.dataLength = *aux;
+	std::string dataStr = data.substr(6, header.dataLength);
 
 	//Set the last message
 	SetLastMessage(header, dataStr);
@@ -48,8 +69,11 @@ const std::string& MessageParser::GetMessageData()
 
 const std::vector<std::string>& MessageParser::GetMessageTokens(const char delim)
 {
+	//Clear the message tokens
+	MessageTokens.clear();
 	//Breaks the LastMessage data into tokens
 	size_t count = 0;
+	MessageTokens.push_back("");
 	for (auto ch : LastMessage.GetData()) {
 		if (ch == delim) {
 			MessageTokens.push_back(std::string());

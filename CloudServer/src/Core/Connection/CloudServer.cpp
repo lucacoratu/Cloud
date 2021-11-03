@@ -71,7 +71,10 @@ void CloudServer::onMessageReceived(uint32_t clientSocket, std::string& msg, int
 		result = plain;
 		break;
 	case Action::REGISTER_ACCOUNT:
-		result = RequestManager::RegisterNewAccount(MessageParser::GetMessageTokens());
+		result = RequestManager::RegisterNewAccount(clientSocket, MessageParser::GetMessageTokens());
+		break;
+	case Action::LOGIN_INTO_ACCOUNT:
+		result = RequestManager::LoginIntoAccount(clientSocket, MessageParser::GetMessageTokens());
 		break;
 	default:
 		SV_WARN("Unsupported request from client, socket {0}", clientSocket);
@@ -81,6 +84,6 @@ void CloudServer::onMessageReceived(uint32_t clientSocket, std::string& msg, int
 
 	//Send the response after finishing the request back to the client
 	this->sendToClient(clientSocket, result, result.size());
-	SV_INFO("Request, type: {0}, completed! Sending the response to the client, socket{1]", MessageParser::GetMessageAction(), clientSocket);
+	//SV_INFO("Request, type: {0}, completed! Sending the response to the client, socket: {1}", static_cast<int>(MessageParser::GetMessageAction()), clientSocket);
 }
 //-----------------------------------------------------------------------------------------------------------

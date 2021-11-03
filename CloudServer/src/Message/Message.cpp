@@ -46,7 +46,7 @@ const std::string Message::GetMessageAsString() const
 	message += static_cast<char>(this->header.action);
 	message += static_cast<char>(this->header.errorNo);
 	//Convert the 4 bytes from the dataLength field into byte array
-	char* ptrDataLength = (char*)(&(this->header.dataLegth));
+	char* ptrDataLength = (char*)(&(this->header.dataLength));
 	for (int i = 0; i < 4; i++)
 		message += ptrDataLength + i;
 	message += this->data;

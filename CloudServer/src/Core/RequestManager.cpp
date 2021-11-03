@@ -32,7 +32,7 @@ void RequestManager::ClientDisconnected(uint32_t clientSocket)
 	SV_INFO("Client disconnected from server, socket {0}, corresponding data has been deallocated", clientSocket);
 }
 
-const std::string RequestManager::RegisterNewAccount(const std::vector<std::string>& messageTokens)
+const std::string RequestManager::RegisterNewAccount(uint32_t clientSocket, const std::vector<std::string>& messageTokens)
 {
 	//Hash the password received from the client
 	std::string hashed_password = HashingAPI::HashString(messageTokens[1]);
@@ -59,6 +59,23 @@ const std::string RequestManager::RegisterNewAccount(const std::vector<std::stri
 	else {
 		MessageCreator::CreateRegisterFailedMessage(static_cast<ErrorCodes>(result));
 		//SV_WARN("Could not create the account! Username: {0}, Error, code: {1}, Message: {2}", messageTokens[0], result,  )
+	}
+
+	return MessageCreator::GetLastMessageAsString();
+}
+
+const std::string RequestManager::LoginIntoAccount(uint32_t clientSocket, const std::vector<std::string>& messageTokens)
+{
+	/*
+	* Hashes the password received from the client then asks the database if the account sent by the client is valid
+	* If it is then the login is successful, otherwise it failed
+	*/
+	SV_INFO("Client, socket: {0}, requested to login into account: {1}", clientSocket, messageTokens[0]);
+	std::string hashed_password = HashingAPI::HashString(messageTokens[1]);
+	bool result = DatabaseAPI::CheckCredentials(messageTokens[0], hashed_password);
+	if (result == false) {
+		MessageCreator::CreateLoginFailedMessage();
+		SV_INFO("Client, socket: {0}, failed to login, inexistent account or wrong credentials", clientSocket);
 	}
 
 	return MessageCreator::GetLastMessageAsString();

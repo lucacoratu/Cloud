@@ -20,6 +20,10 @@ public:
 	SelectAccountQuery(const std::string& username);
 };
 
+class CheckCredentialsQuery : public Query {
+public:
+	CheckCredentialsQuery(const std::string& username, const std::string& hashedPassword);
+};
 
 //INSERT QUERIES
 class RegisterAccountQuery : public Query {
