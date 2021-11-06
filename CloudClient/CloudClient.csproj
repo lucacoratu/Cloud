@@ -38,18 +38,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="src\Connection\Action.cs" />
-    <Compile Include="src\Connection\Message.cs" />
     <Resource Include="Icons\window_icon.png" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="src\Connection\Action.cs" />
+    <Compile Include="src\Connection\Message.cs" />
     <Compile Include="src\Connection\Socket.cs" />
+    <Compile Include="src\Encryption\DHExchange.cs" />
   </ItemGroup>
 </Project>

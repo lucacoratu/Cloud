@@ -9,7 +9,6 @@ static union { char c[4]; unsigned long mylong; } endian_test = { { 'l', '?', '?
 #define ENDIANNESS ((char)endian_test.mylong)
 
 
-
 void MessageParser::CreateMessageFromString(const std::string& data)
 {
 	//Creates a message from a string given and stores it in the LastMessage static variable

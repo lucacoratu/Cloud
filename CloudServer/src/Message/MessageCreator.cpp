@@ -14,6 +14,12 @@ void MessageCreator::CreateWelcomeMessage()
     LastMessage.SetData(welcome_message);
 }
 
+void MessageCreator::CreatePublicKeyMessage(const std::string& publicKey)
+{
+    LastMessage.SetHeader(static_cast<char>(Action::RECEIVE_PUBLIC_KEY), static_cast<char>(ErrorCodes::NO_ERROR_FOUND), static_cast<int>(publicKey.size()));
+    LastMessage.SetData(publicKey);
+}
+
 void MessageCreator::CreateRegisterCompletedMessage()
 {
     /*

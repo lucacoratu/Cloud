@@ -1,6 +1,9 @@
 #include "cloudpch.h"
 #include "Message.h"
 
+static union { char c[4]; unsigned long mylong; } endian_test = { { 'l', '?', '?', 'b' } };
+#define ENDIANNESS ((char)endian_test.mylong)
+
 //Constructors / Destructors
 Message::Message()
 	: header({ static_cast<char>(Action::NO_ACTION), 0 , 0}), data("")
@@ -45,10 +48,20 @@ const std::string Message::GetMessageAsString() const
 	//Convert the header into bytes array and put the bytes in the string
 	message += static_cast<char>(this->header.action);
 	message += static_cast<char>(this->header.errorNo);
-	//Convert the 4 bytes from the dataLength field into byte array
+
+	//Convert the 4 bytes from the dataLength field into byte array (make sure to be in big endian)
 	char* ptrDataLength = (char*)(&(this->header.dataLength));
-	for (int i = 0; i < 4; i++)
-		message += ptrDataLength + i;
+
+	if (ENDIANNESS == 'l') {
+		//If the computer is little endian then take the bytes in opposite order
+		for (int i = 3; i >= 0 ; i--)
+			message += *(ptrDataLength + i);
+	}
+	else {
+		//If the computer is big endian then take the bytes in the same order
+		for (int i = 0; i < 4; i++)
+			message += *(ptrDataLength + i);
+	}
 	message += this->data;
 
 	return message;

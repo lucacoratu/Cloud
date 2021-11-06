@@ -9,6 +9,7 @@ private:
 	static Message LastMessage;
 public:
 	static void CreateWelcomeMessage();
+	static void CreatePublicKeyMessage(const std::string& publicKey);
 	static void CreateRegisterCompletedMessage();
 	static void CreateRegisterFailedMessage(const ErrorCodes& code);
 	static void CreateLoginFailedMessage();

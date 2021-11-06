@@ -26,7 +26,8 @@ project "CloudServer"
 		"%{prj.location}/src/**.h",
 		"%{prj.location}/src/**.cpp",
 		"%{prj.location}/External/sqlite/sqlite3.c",
-		"%{prj.location}/External/SHA256/src/SHA256.cpp"
+		"%{prj.location}/External/SHA256/src/SHA256.cpp",
+		"%{prj.location}/External/DiffieHellman/dhexchange.c"
 	}
 
 	includedirs
@@ -34,7 +35,8 @@ project "CloudServer"
 		"%{prj.location}/External/spdlog/include",
 		"%{prj.location}/External/sqlite",
 		"%{prj.location}/src",
-		"%{prj.location}/External/SHA256/include"
+		"%{prj.location}/External/SHA256/include",
+		"%{prj.location}/External/DiffieHellman"
 	}
 
 	filter "system:windows"
@@ -82,7 +84,6 @@ project "CloudClient"
 		"%{prj.location}/Icons/*.png",
 		"%{prj.location}/*.cs",
 		"%{prj.location}/src/**.cs"
-
 	}
 
 	filter "configurations:Debug"

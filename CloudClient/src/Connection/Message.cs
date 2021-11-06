@@ -38,6 +38,33 @@ namespace CloudClient.src.Connection
             }
         }
 
+        public Message(byte[] message)
+        {
+            this.header.action = message[0];
+            this.header.errorNo = message[1];
+
+
+            byte[] dataL = new byte[4];
+            for(int i =0;i < 4; i++)
+            {
+                dataL[i] = message[2 + i]; 
+            }
+
+            if (BitConverter.IsLittleEndian)
+            {
+                Array.Reverse(dataL);
+            }
+
+            this.header.dataLength = BitConverter.ToInt32(dataL, 0);
+
+            this.data = new byte[this.header.dataLength];
+
+            for (int i = 0; i < this.header.dataLength; i++)
+            {
+                this.data[i] = message[6 + i];
+            }
+        }
+
         public Byte[] GetMessageAsByteArray()
         {
             //Converts the MessageHeader and the data into a byte array
@@ -66,6 +93,11 @@ namespace CloudClient.src.Connection
 
 
             return bytes;
+        }
+
+        public Byte[] GetMessageData()
+        {
+            return this.data;
         }
     }
 }

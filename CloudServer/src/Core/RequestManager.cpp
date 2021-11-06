@@ -4,7 +4,7 @@
 #include "Core/Encryption/HashingAPI.h"
 #include "Core/Core.h"
 #include "Errors/ErrorCodes.h"
-
+#include "Core/Encryption/DiffieHellmanAPI.h"
 
 std::map<uint32_t, ClientData*> RequestManager::connectedClients;
 
@@ -13,11 +13,30 @@ const std::string RequestManager::NewClientConnected(uint32_t clientSocket)
 	/*
 	* Operations that need to be done when a new client connects to the server
 	* Prepare the slot for the socket in the map of connected clients (initiatlize the pointer with nullptr)
-	* Create a welcome message that will be sent back to the client
+	* Create a welcome message, containing the public key of the server, that will be sent back to the client
 	*/
 	connectedClients[clientSocket] = nullptr;
-	MessageCreator::CreateWelcomeMessage();
 	SV_INFO("Client connected to server, socket {0}, preparation completed!", clientSocket);
+
+	//Generate the key pair for the client
+	DiffieHellmanKeyPair ServerKeyPair = DiffieHellmanAPI::GenerateKeyPair();
+
+	//DEBUG...Remove later
+	SV_PRINT_KEY("Public key", ServerKeyPair.publicKey);
+	SV_PRINT_KEY("Private key", ServerKeyPair.privateKey);
+
+	//Save the keys in a more accessible format (std::string instead of unsigned char[])
+	std::string publicKey, privateKey;
+	for (int i = 0; i < DH_KEY_LENGTH; i++) {
+		publicKey += ServerKeyPair.publicKey[i];
+		privateKey += ServerKeyPair.privateKey[i];
+	}
+
+	connectedClients[clientSocket] = new ClientData(publicKey, privateKey);
+
+	//Create the message for the client, containing the public key
+	MessageCreator::CreatePublicKeyMessage(publicKey);
+
 	return MessageCreator::GetLastMessageAsString();
 }
 
@@ -49,7 +68,7 @@ const std::string RequestManager::RegisterNewAccount(uint32_t clientSocket, cons
 	}
 
 	//If the query fails again then make an assertion
-	SV_ASSERT(result > CONVERT_ERROR(ServerErrorCodes::NO_ERROR_FOUND), "Could not register the account into the database!");
+	SV_ASSERT(result == CONVERT_ERROR(ServerErrorCodes::NO_ERROR_FOUND), "Could not register the account into the database!");
 
 	//Construct the afferent message for the client
 	if (result == CONVERT_ERROR(ServerErrorCodes::NO_ERROR_FOUND)) {

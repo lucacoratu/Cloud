@@ -12,6 +12,20 @@ namespace CloudClient.src.Connection
         static TcpClient client;
         static NetworkStream stream;
         static Byte[] serverAnswer;
+
+        static private string ByteArrayToHexString(byte[] Bytes)
+        {
+            StringBuilder Result = new StringBuilder(Bytes.Length * 2);
+            string HexAlphabet = "0123456789ABCDEF";
+
+            foreach (byte B in Bytes)
+            {
+                Result.Append(HexAlphabet[(int)(B >> 4)]);
+                Result.Append(HexAlphabet[(int)(B & 0xF)]);
+            }
+
+            return Result.ToString();
+        }
         static public void ConnectToServer(string serverIpAddress, Int32 port)
         {
             try
@@ -32,11 +46,10 @@ namespace CloudClient.src.Connection
                 Int32 bytes = stream.Read(data, 0, data.Length);
                 serverAnswer = data;
 
-                //responseData = System.Text.Encoding.ASCII.GetString(serverAnswer, 3, bytes);
-                //DEBUG ONLY...REMOVE LATER!!!
-                //string ServerData = new string(responseData.Substring(3));
-                //byte[] SvData = System.Text.Encoding.ASCII.GetBytes(ServerData);
-                //MessageBox.Show(responseData, "Response", MessageBoxButton.OK);
+                //In this message the server sends its public key
+                src.Connection.Message message = new Message(data);
+
+                MessageBox.Show(ByteArrayToHexString(message.GetMessageData()).Substring(0, 30), "Response", MessageBoxButton.OK);
             }
             catch (ArgumentNullException e)
             {
