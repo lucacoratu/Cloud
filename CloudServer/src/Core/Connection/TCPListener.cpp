@@ -122,8 +122,7 @@ int TcpListener::run()
 						closesocket(sock);
 						FD_CLR(sock, &this->master);
 					}
-					else if (bytesIn == 1024) {
-						const unsigned int MAX_BUF_LENGTH = 1024;
+					else if (bytesIn == MAX_BUF_LENGTH) {
 						std::vector<char> buffer(MAX_BUF_LENGTH);
 						std::string rcv;
 						int bytesReceived = 0;

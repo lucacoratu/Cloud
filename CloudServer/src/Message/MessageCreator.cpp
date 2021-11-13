@@ -1,8 +1,7 @@
 #include "cloudpch.h"
 #include "MessageCreator.h"
 
-
-Message MessageCreator::LastMessage = Message();
+#include "Core/Encryption/EncryptionAPI.h"
 
 void MessageCreator::CreateWelcomeMessage()
 {
@@ -18,6 +17,16 @@ void MessageCreator::CreatePublicKeyMessage(const std::string& publicKey)
 {
     LastMessage.SetHeader(static_cast<char>(Action::RECEIVE_PUBLIC_KEY), static_cast<char>(ErrorCodes::NO_ERROR_FOUND), static_cast<int>(publicKey.size()));
     LastMessage.SetData(publicKey);
+}
+
+void MessageCreator::CreateReceivedPublicKey()
+{
+    /*
+    * Creates a message that informs the client that its public key has been received
+    */
+    std::string received_message = "Public key has been received!";
+    LastMessage.SetHeader(static_cast<char>(Action::NO_ACTION), static_cast<char>(ErrorCodes::NO_ERROR_FOUND), static_cast<int>(received_message.size()));
+    LastMessage.SetData(received_message);
 }
 
 void MessageCreator::CreateRegisterCompletedMessage()
@@ -57,6 +66,11 @@ void MessageCreator::CreateMessage(Action action, char errorNo, std::string data
     */
     LastMessage.SetHeader(static_cast<char>(action), errorNo, static_cast<int>(data.size()));
     LastMessage.SetData(data);
+}
+
+std::string MessageCreator::EncryptMessage(std::string key)
+{
+    return EncryptionAPI::Encrypt(this->LastMessage.GetMessageAsString(), key);
 }
 
 const std::string MessageCreator::GetLastMessageAsString()

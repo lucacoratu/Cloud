@@ -27,7 +27,8 @@ project "CloudServer"
 		"%{prj.location}/src/**.cpp",
 		"%{prj.location}/External/sqlite/sqlite3.c",
 		"%{prj.location}/External/SHA256/src/SHA256.cpp",
-		"%{prj.location}/External/DiffieHellman/dhexchange.c"
+		"%{prj.location}/External/DiffieHellman/dhexchange.c",
+		"%{prj.location}/External/AES/src/AES.cpp"
 	}
 
 	includedirs
@@ -36,7 +37,8 @@ project "CloudServer"
 		"%{prj.location}/External/sqlite",
 		"%{prj.location}/src",
 		"%{prj.location}/External/SHA256/include",
-		"%{prj.location}/External/DiffieHellman"
+		"%{prj.location}/External/DiffieHellman",
+		"%{prj.location}/External/AES/src"
 	}
 
 	filter "system:windows"
@@ -63,6 +65,9 @@ project "CloudServer"
 
 	--The tokens do not work in the filter section so the relative path from the premake5.lua file to the SHA256 file should be hardcoded
 	filter "files:CloudServer/External/SHA256/src/**.cpp"
+		flags {"NOPCH"}
+
+	filter "files:CloudServer/External/AES/src/**.cpp"
 		flags {"NOPCH"}
 
 project "CloudClient"

@@ -80,7 +80,7 @@
       <PrecompiledHeaderFile>cloudpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SV_WINDOWS;SV_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;External\SHA256\include;External\DiffieHellman;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;External\SHA256\include;External\DiffieHellman;External\AES\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
@@ -97,7 +97,7 @@
       <PrecompiledHeaderFile>cloudpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SV_WINDOWS;SV_RELEASE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;External\SHA256\include;External\DiffieHellman;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;External\SHA256\include;External\DiffieHellman;External\AES\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -118,7 +118,7 @@
       <PrecompiledHeaderFile>cloudpch.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <PreprocessorDefinitions>SV_WINDOWS;SV_DISTRIBUTION;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;External\SHA256\include;External\DiffieHellman;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>External\spdlog\include;External\sqlite;src;External\SHA256\include;External\DiffieHellman;External\AES\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <Optimization>Full</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
@@ -141,6 +141,7 @@
     <ClInclude Include="src\Core\Database\DatabaseAPI.h" />
     <ClInclude Include="src\Core\Database\Queries\Queries.h" />
     <ClInclude Include="src\Core\Encryption\DiffieHellmanAPI.h" />
+    <ClInclude Include="src\Core\Encryption\EncryptionAPI.h" />
     <ClInclude Include="src\Core\Encryption\HashingAPI.h" />
     <ClInclude Include="src\Core\Log.h" />
     <ClInclude Include="src\Core\RequestManager.h" />
@@ -154,6 +155,9 @@
     <ClInclude Include="src\cloudpch.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="External\AES\src\AES.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="External\DiffieHellman\dhexchange.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -169,6 +173,11 @@
     <ClCompile Include="src\Core\Database\DatabaseAPI.cpp" />
     <ClCompile Include="src\Core\Database\Queries\Queries.cpp" />
     <ClCompile Include="src\Core\Encryption\DiffieHellmanAPI.cpp" />
+    <ClCompile Include="src\Core\Encryption\EncryptionAPI.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Distribution|x64'">Use</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Use</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="src\Core\Encryption\HashingAPI.cpp" />
     <ClCompile Include="src\Core\Log.cpp" />
     <ClCompile Include="src\Core\RequestManager.cpp" />

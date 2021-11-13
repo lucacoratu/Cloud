@@ -4,3 +4,6 @@
 [submodule "External/DiffieHellman"]
 	path = External/DiffieHellman
 	url = https://github.com/thejinchao/dhexchange
+[submodule "CloudServer/External/AES"]
+	path = CloudServer/External/AES
+	url = https://github.com/SergeyBel/AES

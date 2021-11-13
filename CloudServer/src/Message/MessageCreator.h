@@ -6,15 +6,17 @@
 
 class MessageCreator {
 private:
-	static Message LastMessage;
+	Message LastMessage;
 public:
-	static void CreateWelcomeMessage();
-	static void CreatePublicKeyMessage(const std::string& publicKey);
-	static void CreateRegisterCompletedMessage();
-	static void CreateRegisterFailedMessage(const ErrorCodes& code);
-	static void CreateLoginFailedMessage();
-	static void CreateMessage(Action action, char errorNo, std::string data);
-	static const std::string GetLastMessageAsString();
+	void CreateWelcomeMessage();
+	void CreatePublicKeyMessage(const std::string& publicKey);
+	void CreateReceivedPublicKey();
+	void CreateRegisterCompletedMessage();
+	void CreateRegisterFailedMessage(const ErrorCodes& code);
+	void CreateLoginFailedMessage();
+	void CreateMessage(Action action, char errorNo, std::string data);
+	std::string EncryptMessage(std::string key);
+	const std::string GetLastMessageAsString();
 };
 
 #endif

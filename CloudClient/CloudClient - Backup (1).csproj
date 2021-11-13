@@ -45,7 +45,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
-    <Resource Include="Icons\window_icon.png" />
+    <None Include="Icons\window_icon.png" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -54,6 +54,5 @@
     <Compile Include="src\Connection\Message.cs" />
     <Compile Include="src\Connection\Socket.cs" />
     <Compile Include="src\Encryption\DHExchange.cs" />
-    <Compile Include="src\Encryption\EncryptionAPI.cs" />
   </ItemGroup>
 </Project>

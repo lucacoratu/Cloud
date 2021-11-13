@@ -4,6 +4,8 @@
 enum class ErrorCodes {
 	NO_ERROR_FOUND = 0,
 	USERNAME_ALREADY_USED = 1,
+	UNKNOWN_REQUEST = 2,
+	MESSAGE_TOO_SHORT,
 };
 
 

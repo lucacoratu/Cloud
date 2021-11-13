@@ -19,7 +19,7 @@ private:
 
 public:
 	static DiffieHellmanKeyPair GenerateKeyPair();
-	static unsigned char* GenerateSecret(DH_KEY privateKey, DH_KEY otherPublicKey);
+	static void GenerateSecret(DH_KEY secret, DH_KEY privateKey, DH_KEY otherPublicKey);
 };
 
 static void _print_key(const char* name, const DH_KEY key) {
