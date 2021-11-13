@@ -61,8 +61,8 @@ namespace CloudClient
             Byte[] serverMesssage = message.GetMessageAsByteArray();
             src.Connection.Socket.SendToServer(serverMesssage, serverMesssage.Length);
 
-            string answer = Encoding.ASCII.GetString(src.Connection.Socket.GetServerAnswer());
-            answer = answer.Substring(3);
+            src.Connection.Message response = new src.Connection.Message(src.Connection.Socket.GetServerAnswer());
+            string answer = Encoding.ASCII.GetString(response.GetMessageData());
 
             MessageBox.Show(answer, "Message");
         }

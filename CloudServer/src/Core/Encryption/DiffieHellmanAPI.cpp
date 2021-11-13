@@ -16,9 +16,7 @@ DiffieHellmanKeyPair DiffieHellmanAPI::GenerateKeyPair()
     return keyPair;
 }
 
-unsigned char* DiffieHellmanAPI::GenerateSecret(DH_KEY privateKey, DH_KEY otherPublicKey)
+void DiffieHellmanAPI::GenerateSecret(DH_KEY secret, DH_KEY privateKey, DH_KEY otherPublicKey)
 {
-    DH_KEY secret;
     DH_generate_key_secret(secret, privateKey, otherPublicKey);
-    return secret;
 }

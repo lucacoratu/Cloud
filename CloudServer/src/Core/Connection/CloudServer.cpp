@@ -27,12 +27,6 @@ void CloudServer::deleteInstance() {
 //When a client application connects / disconnects
 void CloudServer::onClientConnected(uint32_t clientSocket)
 {
-	//Server public key
-	//std::string publicKey = this->actionHandler.newClientConnected(clientSocket);
-
-	//Send the public key to the client
-	//this->sendToClient(clientSocket, publicKey, DH_KEY_LENGTH + 1);
-	//SV_INFO("Public key was sent to client");
 	std::string welcome_message = RequestManager::NewClientConnected(clientSocket);
 	this->sendToClient(clientSocket, welcome_message, welcome_message.size());
 }
@@ -40,8 +34,7 @@ void CloudServer::onClientConnected(uint32_t clientSocket)
 void CloudServer::onClientDisconnected(uint32_t clientSocket)
 {
 	RequestManager::ClientDisconnected(clientSocket);
-	//When a client disconnects from the server
-	//this->actionHandler.clientDisconnected(clientSocket);
+
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------
@@ -50,40 +43,50 @@ void CloudServer::onClientDisconnected(uint32_t clientSocket)
 //Requests from client application
 void CloudServer::onMessageReceived(uint32_t clientSocket, std::string& msg, int length)
 {
-	////Decrypt the message received from the client if it supports encryption and the diffie-hellman key exchange has finished
-	//if (this->actionHandler.SupportsEncryptedConnection(clientSocket)) {
-	//	if (this->actionHandler.DiffieHellmanEstablished(clientSocket))
-	//		plain = MessageParser::decryptString(msg, this->actionHandler.getClientSecret(clientSocket));
-	//}
+	//Create the message parser object
+	MessageParser message_parser;
 
 	//The result of the action, that has to be sent back to the client
 	std::string result = "";
+	std::string plain = msg;
 
 	//TO DO...Server should support encrypted connection
-	std::string plain = msg;
-	MessageParser::CreateMessageFromString(plain);
+	if (RequestManager::ClientSupportsEncryption(clientSocket)) {
+		plain = message_parser.DecryptMessage(msg, RequestManager::GetClientSecret(clientSocket));
+		//Verify if the length of the message is long enough
+		if (plain.size() < sizeof(MessageHeader)) {
+			RequestManager::InvalidMessageLength(clientSocket, plain);
+		}
+	}
+	
+	message_parser.CreateMessageFromString(plain);
 
 	//Get the action specified in the message
-	switch (MessageParser::GetMessageAction()) 
+	switch (message_parser.GetMessageAction())
 	{
 	case Action::TEST_CONNECTION:
 		//Client requests the server to send back the message that he sent
 		result = plain;
 		break;
+	case Action::RECEIVE_PUBLIC_KEY:
+		//Client sends its public key
+		result = RequestManager::ReceivePublicKey(clientSocket, message_parser.GetMessageData());
+		break;
 	case Action::REGISTER_ACCOUNT:
-		result = RequestManager::RegisterNewAccount(clientSocket, MessageParser::GetMessageTokens());
+		//Client wants to register a new account
+		result = RequestManager::RegisterNewAccount(clientSocket, message_parser.GetMessageTokens());
 		break;
 	case Action::LOGIN_INTO_ACCOUNT:
-		result = RequestManager::LoginIntoAccount(clientSocket, MessageParser::GetMessageTokens());
+		//Client wants to log into an account 
+		result = RequestManager::LoginIntoAccount(clientSocket, message_parser.GetMessageTokens());
 		break;
 	default:
-		SV_WARN("Unsupported request from client, socket {0}", clientSocket);
-		result = "";
+		//The action specified by the client is not a valid one
+		result = RequestManager::UnknownRequest(clientSocket);
 		break;
 	}
 
 	//Send the response after finishing the request back to the client
 	this->sendToClient(clientSocket, result, result.size());
-	//SV_INFO("Request, type: {0}, completed! Sending the response to the client, socket: {1}", static_cast<int>(MessageParser::GetMessageAction()), clientSocket);
 }
 //-----------------------------------------------------------------------------------------------------------

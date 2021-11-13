@@ -15,6 +15,9 @@ const std::string RequestManager::NewClientConnected(uint32_t clientSocket)
 	* Prepare the slot for the socket in the map of connected clients (initiatlize the pointer with nullptr)
 	* Create a welcome message, containing the public key of the server, that will be sent back to the client
 	*/
+
+	MessageCreator message_creator;
+
 	connectedClients[clientSocket] = nullptr;
 	SV_INFO("Client connected to server, socket {0}, preparation completed!", clientSocket);
 
@@ -35,9 +38,9 @@ const std::string RequestManager::NewClientConnected(uint32_t clientSocket)
 	connectedClients[clientSocket] = new ClientData(publicKey, privateKey);
 
 	//Create the message for the client, containing the public key
-	MessageCreator::CreatePublicKeyMessage(publicKey);
+	message_creator.CreatePublicKeyMessage(publicKey);
 
-	return MessageCreator::GetLastMessageAsString();
+	return message_creator.GetLastMessageAsString();
 }
 
 void RequestManager::ClientDisconnected(uint32_t clientSocket)
@@ -51,8 +54,50 @@ void RequestManager::ClientDisconnected(uint32_t clientSocket)
 	SV_INFO("Client disconnected from server, socket {0}, corresponding data has been deallocated", clientSocket);
 }
 
+const std::string RequestManager::UnknownRequest(uint32_t clientSocket)
+{
+	/*
+	* Creates a message for the client which says that the request it asked for is bot supported
+	* If the client supports encrypted connection then the message will be encrypted
+	* Else it will remain in plain text
+	*/
+	MessageCreator message_creator;
+	
+	SV_WARN("Unsupported request from client, socket {0}", clientSocket);
+	message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::UNKNOWN_REQUEST), "This type of request is not supported by the server");
+
+	std::string message_for_client = message_creator.GetLastMessageAsString();
+	if (connectedClients[clientSocket]->SupportsEncryption())
+		message_for_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+
+	return message_for_client;
+}
+
+const std::string RequestManager::InvalidMessageLength(uint32_t clientSocket, const std::string message)
+{
+	/*
+	* Creates an error message for the client
+	* If the client supports encryption then the error message will be encrypted
+	* Else the message will remain in plain text
+	*/
+	MessageCreator message_creator;
+
+	SV_WARN("Message received from client was too short, socket {0}", clientSocket);
+	std::string invalid_length_message = "The message you sent is too short";
+	message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::MESSAGE_TOO_SHORT), invalid_length_message);
+	std::string message_for_client = message_creator.GetLastMessageAsString();
+
+	if(connectedClients[clientSocket]->SupportsEncryption())
+		message_for_client = message_creator.EncryptMessage(RequestManager::GetClientSecret(clientSocket));
+
+	
+	return message_for_client;
+}
+
 const std::string RequestManager::RegisterNewAccount(uint32_t clientSocket, const std::vector<std::string>& messageTokens)
 {
+	MessageCreator message_creator;
+
 	//Hash the password received from the client
 	std::string hashed_password = HashingAPI::HashString(messageTokens[1]);
 	/*
@@ -72,15 +117,19 @@ const std::string RequestManager::RegisterNewAccount(uint32_t clientSocket, cons
 
 	//Construct the afferent message for the client
 	if (result == CONVERT_ERROR(ServerErrorCodes::NO_ERROR_FOUND)) {
-		MessageCreator::CreateRegisterCompletedMessage();
+		message_creator.CreateRegisterCompletedMessage();
 		SV_INFO("New account has been created! Username: {0}", messageTokens[0]);
 	}
 	else {
-		MessageCreator::CreateRegisterFailedMessage(static_cast<ErrorCodes>(result));
+		message_creator.CreateRegisterFailedMessage(static_cast<ErrorCodes>(result));
 		//SV_WARN("Could not create the account! Username: {0}, Error, code: {1}, Message: {2}", messageTokens[0], result,  )
 	}
 
-	return MessageCreator::GetLastMessageAsString();
+	std::string message_for_client = message_creator.GetLastMessageAsString();
+	if (connectedClients[clientSocket]->SupportsEncryption())
+		message_for_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+
+	return message_for_client;
 }
 
 const std::string RequestManager::LoginIntoAccount(uint32_t clientSocket, const std::vector<std::string>& messageTokens)
@@ -89,19 +138,82 @@ const std::string RequestManager::LoginIntoAccount(uint32_t clientSocket, const 
 	* Hashes the password received from the client then asks the database if the account sent by the client is valid
 	* If it is then the login is successful, otherwise it failed
 	*/
+	MessageCreator message_creator;
+
 	SV_INFO("Client, socket: {0}, requested to login into account: {1}", clientSocket, messageTokens[0]);
 	std::string hashed_password = HashingAPI::HashString(messageTokens[1]);
 	bool result = DatabaseAPI::CheckCredentials(messageTokens[0], hashed_password);
 	if (result == false) {
-		MessageCreator::CreateLoginFailedMessage();
-		SV_INFO("Client, socket: {0}, failed to login, inexistent account or wrong credentials", clientSocket);
+		message_creator.CreateLoginFailedMessage();
+		SV_WARN("Client, socket: {0}, failed to login, inexistent account or wrong credentials", clientSocket);
 	}
 
-	return MessageCreator::GetLastMessageAsString();
+	std::string message_for_client = message_creator.GetLastMessageAsString();
+	if (connectedClients[clientSocket]->SupportsEncryption())
+		message_for_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+
+	return message_for_client;
+}
+
+const std::string RequestManager::ReceivePublicKey(uint32_t clientSocket, const std::string message)
+{
+	/*
+	* Receives the public key of the client then generates the shared secret
+	* And saves the secret in the client data of the afferent client
+	* Then points out that the client supports encrypted connection
+	*/
+	MessageCreator message_creator;
+
+	DH_KEY clientPublicKey;
+	for (size_t i = 0; i < message.size(); i++)
+		clientPublicKey[i] = message[i];
+
+	DH_KEY serverPrivateKey;
+	std::string serverPrivate = connectedClients[clientSocket]->GetPrivateKey();
+	for (size_t i = 0; i < serverPrivate.size(); i++)
+		serverPrivateKey[i] = serverPrivate[i];
+
+	//Generate the secret
+	DH_KEY secret;
+	DiffieHellmanAPI::GenerateSecret(secret, serverPrivateKey, clientPublicKey);
+	std::string secretKey = "";
+
+	for (size_t i = 0; i < DH_KEY_LENGTH; i++)
+		secretKey += secret[i];
+
+	connectedClients[clientSocket]->SetSupportsEncryption(true);
+	connectedClients[clientSocket]->SetSecret(secretKey);
+
+	SV_INFO("Secret generated for client, socket {0}", clientSocket);
+	_print_key("Secret", secret);
+
+	message_creator.CreateReceivedPublicKey();
+
+	return message_creator.GetLastMessageAsString();
+}
+
+bool RequestManager::ClientSupportsEncryption(uint32_t clientSocket)
+{
+	/*
+	* Returns true if the client supports encrypted connection
+	* Else this returns false
+	*/
+	return connectedClients[clientSocket]->SupportsEncryption();
+}
+
+std::string RequestManager::GetClientSecret(uint32_t clientSocket)
+{
+	/*
+	* Returns the established secret with the client
+	*/
+	return connectedClients[clientSocket]->GetSecret();
 }
 
 void RequestManager::ClearRequestManager()
 {
+	/*
+	* Deallocates the memory used by the request manager
+	*/
 	for (auto& client : connectedClients) {
 		delete client.second;
 	}

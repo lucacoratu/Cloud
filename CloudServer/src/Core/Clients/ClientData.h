@@ -16,7 +16,14 @@ public:
 	ClientData(const std::string publicKey, const std::string privateKey);
 	~ClientData();
 
+	//Accessors
+	const std::string GetPrivateKey() const;
+	const std::string GetSecret() const;
 	bool SupportsEncryption();
+
+	//Modifiers
+	void SetSupportsEncryption(const bool supportsEncryption);
+	void SetSecret(const std::string& secret);
 };
 
 

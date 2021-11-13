@@ -15,6 +15,16 @@ ClientData::~ClientData()
 	this->accountUsername.clear();
 }
 
+const std::string ClientData::GetPrivateKey() const
+{
+	return this->privateKey;
+}
+
+const std::string ClientData::GetSecret() const
+{
+	return this->secret;
+}
+
 bool ClientData::SupportsEncryption()
 {
 	/*
@@ -22,4 +32,14 @@ bool ClientData::SupportsEncryption()
 	* The secret is generated when the server receives the public key from the client
 	*/
 	return (this->secret != "") ? true : false;
+}
+
+void ClientData::SetSupportsEncryption(const bool supportsEncryption)
+{
+	this->supportsEncyption = supportsEncryption;
+}
+
+void ClientData::SetSecret(const std::string& secret)
+{
+	this->secret = secret;
 }

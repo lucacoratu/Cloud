@@ -7,16 +7,21 @@
 class MessageParser {
 private:
 	//Memeber variables
-	static Message LastMessage;
-	static std::vector<std::string> MessageTokens;
+	Message LastMessage;
+	std::vector<std::string> MessageTokens;
 public:
+	//Constructors / Destructors
+	MessageParser();
+	~MessageParser();
+
 	//Functions
-	static void CreateMessageFromString(const std::string& data);
-	static void SetLastMessage(const Message& message);
-	static void SetLastMessage(const MessageHeader& header, const std::string& data);
-	static const Action& GetMessageAction();
-	static const std::string& GetMessageData();
-	static const std::vector<std::string>& GetMessageTokens(const char delim = ' ');
+	void CreateMessageFromString(const std::string& data);
+	void SetLastMessage(const Message& message);
+	void SetLastMessage(const MessageHeader& header, const std::string& data);
+	const Action GetMessageAction();
+	const std::string& GetMessageData();
+	const std::vector<std::string>& GetMessageTokens(const char delim = ' ');
+	const std::string DecryptMessage(const std::string& data, const std::string key);
 };
 
 

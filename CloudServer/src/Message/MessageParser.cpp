@@ -1,12 +1,21 @@
 #include "cloudpch.h"
 #include "MessageParser.h"
 
+#include "Core/Encryption/EncryptionAPI.h"
 //Empty message
-Message MessageParser::LastMessage = Message();
-std::vector<std::string> MessageParser::MessageTokens = std::vector<std::string>();
 
 static union { char c[4]; unsigned long mylong; } endian_test = { { 'l', '?', '?', 'b' } };
 #define ENDIANNESS ((char)endian_test.mylong)
+
+//Constructors / Destructors
+MessageParser::MessageParser() 
+{
+
+}
+
+MessageParser::~MessageParser() {
+	this->MessageTokens.clear();
+}
 
 
 void MessageParser::CreateMessageFromString(const std::string& data)
@@ -34,7 +43,9 @@ void MessageParser::CreateMessageFromString(const std::string& data)
 		aux = (int*)dataLength.c_str();
 	}
 
-	header.dataLength = *aux;
+	if(aux != NULL)
+		header.dataLength = *aux;
+
 	std::string dataStr = data.substr(6, header.dataLength);
 
 	//Set the last message
@@ -54,7 +65,7 @@ void MessageParser::SetLastMessage(const MessageHeader& header, const std::strin
 	LastMessage.SetData(data);
 }
 
-const Action& MessageParser::GetMessageAction()
+const Action MessageParser::GetMessageAction()
 {
 	//Converts the Action field in the message header to an enum which lists the supported actions
 	return static_cast<Action>(LastMessage.GetMessageHeader().action);
@@ -77,8 +88,14 @@ const std::vector<std::string>& MessageParser::GetMessageTokens(const char delim
 		if (ch == delim) {
 			MessageTokens.push_back(std::string());
 			count++;
+			continue;
 		}
 		MessageTokens[count] += ch;
 	}
 	return MessageTokens;
+}
+
+const std::string MessageParser::DecryptMessage(const std::string& data, const std::string key)
+{
+	return EncryptionAPI::Decrypt(data, key);;
 }
