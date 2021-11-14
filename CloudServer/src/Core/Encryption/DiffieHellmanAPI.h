@@ -9,10 +9,10 @@
 
 #include "dhexchange.h"
 
-typedef struct DiffieHellmanKeyPair {
+typedef struct {
 	DH_KEY publicKey;
 	DH_KEY privateKey;
-};
+} DiffieHellmanKeyPair;
 
 class DiffieHellmanAPI {
 private:

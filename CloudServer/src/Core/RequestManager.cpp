@@ -6,9 +6,9 @@
 #include "Errors/ErrorCodes.h"
 #include "Core/Encryption/DiffieHellmanAPI.h"
 
-std::map<uint32_t, ClientData*> RequestManager::connectedClients;
+std::map<uint64_t, ClientData*> RequestManager::connectedClients;
 
-const std::string RequestManager::NewClientConnected(uint32_t clientSocket)
+const std::string RequestManager::NewClientConnected(uint64_t clientSocket)
 {
 	/*
 	* Operations that need to be done when a new client connects to the server
@@ -43,7 +43,7 @@ const std::string RequestManager::NewClientConnected(uint32_t clientSocket)
 	return message_creator.GetLastMessageAsString();
 }
 
-void RequestManager::ClientDisconnected(uint32_t clientSocket)
+void RequestManager::ClientDisconnected(uint64_t clientSocket)
 {
 	/*
 	* Operations that need to be done if a client disconnects from the server
@@ -54,7 +54,7 @@ void RequestManager::ClientDisconnected(uint32_t clientSocket)
 	SV_INFO("Client disconnected from server, socket {0}, corresponding data has been deallocated", clientSocket);
 }
 
-const std::string RequestManager::UnknownRequest(uint32_t clientSocket)
+const std::string RequestManager::UnknownRequest(uint64_t clientSocket)
 {
 	/*
 	* Creates a message for the client which says that the request it asked for is bot supported
@@ -73,7 +73,7 @@ const std::string RequestManager::UnknownRequest(uint32_t clientSocket)
 	return message_for_client;
 }
 
-const std::string RequestManager::InvalidMessageLength(uint32_t clientSocket, const std::string message)
+const std::string RequestManager::InvalidMessageLength(uint64_t clientSocket, const std::string message)
 {
 	/*
 	* Creates an error message for the client
@@ -94,7 +94,7 @@ const std::string RequestManager::InvalidMessageLength(uint32_t clientSocket, co
 	return message_for_client;
 }
 
-const std::string RequestManager::RegisterNewAccount(uint32_t clientSocket, const std::vector<std::string>& messageTokens)
+const std::string RequestManager::RegisterNewAccount(uint64_t clientSocket, const std::vector<std::string>& messageTokens)
 {
 	MessageCreator message_creator;
 
@@ -132,7 +132,7 @@ const std::string RequestManager::RegisterNewAccount(uint32_t clientSocket, cons
 	return message_for_client;
 }
 
-const std::string RequestManager::LoginIntoAccount(uint32_t clientSocket, const std::vector<std::string>& messageTokens)
+const std::string RequestManager::LoginIntoAccount(uint64_t clientSocket, const std::vector<std::string>& messageTokens)
 {
 	/*
 	* Hashes the password received from the client then asks the database if the account sent by the client is valid
@@ -155,7 +155,7 @@ const std::string RequestManager::LoginIntoAccount(uint32_t clientSocket, const 
 	return message_for_client;
 }
 
-const std::string RequestManager::ReceivePublicKey(uint32_t clientSocket, const std::string message)
+const std::string RequestManager::ReceivePublicKey(uint64_t clientSocket, const std::string message)
 {
 	/*
 	* Receives the public key of the client then generates the shared secret
@@ -192,7 +192,7 @@ const std::string RequestManager::ReceivePublicKey(uint32_t clientSocket, const 
 	return message_creator.GetLastMessageAsString();
 }
 
-bool RequestManager::ClientSupportsEncryption(uint32_t clientSocket)
+bool RequestManager::ClientSupportsEncryption(uint64_t clientSocket)
 {
 	/*
 	* Returns true if the client supports encrypted connection
@@ -201,7 +201,7 @@ bool RequestManager::ClientSupportsEncryption(uint32_t clientSocket)
 	return connectedClients[clientSocket]->SupportsEncryption();
 }
 
-std::string RequestManager::GetClientSecret(uint32_t clientSocket)
+std::string RequestManager::GetClientSecret(uint64_t clientSocket)
 {
 	/*
 	* Returns the established secret with the client

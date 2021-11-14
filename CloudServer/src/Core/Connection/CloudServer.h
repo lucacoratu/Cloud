@@ -18,13 +18,13 @@ private:
 protected:
 
 	// Handler for a new connection
-	void onClientConnected(uint32_t clientSocket) override final;
+	void onClientConnected(uint64_t clientSocket) override final;
 
 	// Handler for a client disconnection
-	void onClientDisconnected(uint32_t clientSocket) override final;
+	void onClientDisconnected(uint64_t clientSocket) override final;
 
 	// Handler for a message received from a client
-	void onMessageReceived(uint32_t clientSocket, std::string& msg, int length) override final;
+	void onMessageReceived(uint64_t clientSocket, std::string& msg, int length) override final;
 public:
 	//Instance functions
 	static CloudServer& createInstance(const char* ipAdress, int port);

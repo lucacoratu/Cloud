@@ -25,13 +25,13 @@ void CloudServer::deleteInstance() {
 
 
 //When a client application connects / disconnects
-void CloudServer::onClientConnected(uint32_t clientSocket)
+void CloudServer::onClientConnected(uint64_t clientSocket)
 {
 	std::string welcome_message = RequestManager::NewClientConnected(clientSocket);
 	this->sendToClient(clientSocket, welcome_message, welcome_message.size());
 }
 
-void CloudServer::onClientDisconnected(uint32_t clientSocket)
+void CloudServer::onClientDisconnected(uint64_t clientSocket)
 {
 	RequestManager::ClientDisconnected(clientSocket);
 
@@ -41,7 +41,7 @@ void CloudServer::onClientDisconnected(uint32_t clientSocket)
 
 
 //Requests from client application
-void CloudServer::onMessageReceived(uint32_t clientSocket, std::string& msg, int length)
+void CloudServer::onMessageReceived(uint64_t clientSocket, std::string& msg, int length)
 {
 	//Create the message parser object
 	MessageParser message_parser;
