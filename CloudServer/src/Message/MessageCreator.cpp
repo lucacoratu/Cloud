@@ -45,7 +45,7 @@ void MessageCreator::CreateRegisterFailedMessage(const ErrorCodes& code)
     * Creates a message with the afferent error codeand data field, if the register account fails
     */
     std::string message_data = ErrorManager::GetErrorDetails(code);
-    LastMessage.SetHeader(static_cast<char>(Action::NO_ACTION), static_cast<char>(code), message_data.size());
+    LastMessage.SetHeader(static_cast<char>(Action::NO_ACTION), static_cast<char>(code), static_cast<int>(message_data.size()));
     LastMessage.SetData(message_data);
 }
 
@@ -55,7 +55,7 @@ void MessageCreator::CreateLoginFailedMessage()
     * Creates the message for when the login fails
     */
     std::string message_data = "Login failed, try again later!";
-    LastMessage.SetHeader(static_cast<char>(Action::NO_ACTION), static_cast<char>(0), message_data.size());
+    LastMessage.SetHeader(static_cast<char>(Action::NO_ACTION), static_cast<char>(0), static_cast<int>(message_data.size()));
     LastMessage.SetData(message_data);
 }
 

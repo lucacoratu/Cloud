@@ -16,7 +16,6 @@ int TcpListener::init()
 	{
 		return wsOk;
 	}
-
 	// Create a socket
 	s_socket = socket(AF_INET, SOCK_STREAM, 0);
 	if (s_socket == INVALID_SOCKET)
@@ -185,31 +184,31 @@ int TcpListener::run()
 }
 
 //Send the message to the client
-void TcpListener::sendToClient(uint32_t clientSocket, const char* msg, size_t length)
+void TcpListener::sendToClient(uint64_t clientSocket, const char* msg, size_t length)
 {
 	send(clientSocket, msg, static_cast<int>(length), 0);
 }
 
-void TcpListener::sendToClient(uint32_t clientSocket, std::string& msg, size_t length) {
+void TcpListener::sendToClient(uint64_t clientSocket, std::string& msg, size_t length) {
 	send(clientSocket, &msg[0], static_cast<int>(length), 0);
 }
 
 
-void TcpListener::broadcastToClients(uint32_t sendingClient, const char* msg, int length) {
+void TcpListener::broadcastToClients(uint64_t sendingClient, const char* msg, int length) {
 
 }
 
-void TcpListener::onClientConnected(uint32_t clientSocket)
+void TcpListener::onClientConnected(uint64_t clientSocket)
 {
 
 }
 
-void TcpListener::onClientDisconnected(uint32_t clientSocket)
+void TcpListener::onClientDisconnected(uint64_t clientSocket)
 {
 
 }
 
-void TcpListener::onMessageReceived(uint32_t clientSocket, std::string& msg, int length)
+void TcpListener::onMessageReceived(uint64_t clientSocket, std::string& msg, int length)
 {
 
 }
