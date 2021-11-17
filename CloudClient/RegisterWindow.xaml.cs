@@ -113,7 +113,7 @@ namespace CloudClient
 
             byte[] server_answer = src.Connection.Socket.GetServerAnswer();
 
-            src.Connection.Message response = new src.Connection.Message(server_answer);
+            src.Connection.Message response = src.Connection.Socket.GetServerMessage();
             string resp = Encoding.ASCII.GetString(response.GetMessageData());
             MessageBox.Show(resp, "Message");
         }
