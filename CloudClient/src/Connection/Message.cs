@@ -65,6 +65,18 @@ namespace CloudClient.src.Connection
             }
         }
 
+        public Message(byte action, byte errorNo, int dataLength, byte[] data)
+        {
+            this.header.action = action;
+            this.header.errorNo = errorNo;
+            this.header.dataLength = dataLength;
+
+            for (int i = 0; i < this.header.dataLength; i++)
+            {
+                this.data[i] = data[i];
+            }
+        }
+
         public Byte[] GetMessageAsByteArray()
         {
             //Converts the MessageHeader and the data into a byte array
@@ -98,6 +110,16 @@ namespace CloudClient.src.Connection
         public Byte[] GetMessageData()
         {
             return this.data;
+        }
+
+        public byte GetMessageAction()
+        {
+            return this.header.action;
+        }
+
+        public byte GetMessageError()
+        {
+            return this.header.errorNo;
         }
     }
 }

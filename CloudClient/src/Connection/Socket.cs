@@ -17,6 +17,7 @@ namespace CloudClient.src.Connection
         static NetworkStream stream;
         static Byte[] serverAnswer;
         static Byte[] secret;
+        static Message serverMessage;
 
         static private string ByteArrayToHexString(byte[] Bytes)
         {
@@ -79,7 +80,9 @@ namespace CloudClient.src.Connection
                 src.Connection.Message message1 = new Message(data);
 
                 string mes1 = Encoding.ASCII.GetString(message1.GetMessageData());
-                MessageBox.Show(mes1 + "\nsecret: " + ByteArrayToHexString(secret).Substring(0,30));
+                //MessageBox.Show(mes1 + "\nsecret: " + ByteArrayToHexString(secret).Substring(0,30));
+
+                //TO DO...Test the connection with the server (If the server responds with unknown command then regenerate the keys)
             }
             catch (ArgumentNullException e)
             {
@@ -96,6 +99,11 @@ namespace CloudClient.src.Connection
             return serverAnswer;
         }
 
+        static public Message GetServerMessage()
+        {
+            return serverMessage;
+        }
+
         static public void SendToServer(Byte[] data, int dataLength)
         {
             //Sends the byte array to the server
@@ -106,22 +114,6 @@ namespace CloudClient.src.Connection
 
                 // Encrypt the string to an array of bytes.
                 encrypted = Encryption.EncryptionAPI.EncryptStringToBytes(System.Text.Encoding.UTF8.GetString(data, 0, dataLength), secret, iv);
-
-                //DEBUG...remove later
-                //StringBuilder s = new StringBuilder();
-                //foreach (byte item in encrypted)
-                //{
-                //    s.Append(item.ToString("X2") + " ");
-                //}
-                //MessageBox.Show("Encrypted:   " + s);
-
-                //// Decrypt the bytes to a string.
-                //string decrypted = Encryption.EncryptionAPI.DecryptStringFromBytes(encrypted, secret, iv);
-
-                ////Display the original data and the decrypted data.
-                //MessageBox.Show("Decrypted:    " + decrypted.Substring(6));
-
-                //byte[] encryptedUTF8 = System.Text.Encoding.UTF8.GetBytes(encrypted);
 
                 byte[] answer = new byte[256];
                 Array.Clear(answer, 0, 256); 
@@ -136,13 +128,13 @@ namespace CloudClient.src.Connection
 
                 string decryptedString = Encryption.EncryptionAPI.DecryptStringFromBytes(cypherText, secret, iv);
                 serverAnswer = Encoding.UTF8.GetBytes(decryptedString);
-                //MessageBox.Show(decryptedString.Substring(6));
+
+                //Create a message from the server answer
+                serverMessage = new src.Connection.Message(serverAnswer);
             }
             catch(ArgumentNullException e){
                 MessageBox.Show(e.Message, "Error::Socket.SendToServer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
-
-
         }
     }
 }
