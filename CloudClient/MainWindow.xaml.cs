@@ -66,5 +66,27 @@ namespace CloudClient
 
             MessageBox.Show(answer, "Message");
         }
+
+        private void txtblock_signup_MouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            /*
+             * Change the window to the register window 
+             */
+            this.Hide();
+            RegisterWindow regWindow = new RegisterWindow();
+            regWindow.Show();
+        }
+
+        private void txtbox_username_GotFocus(object sender, RoutedEventArgs e)
+        {
+            this.txtbox_username.Text = "";
+            this.txtbox_username.HorizontalContentAlignment = HorizontalAlignment.Left;
+        }
+
+        private void txtbox_password_GotFocus(object sender, RoutedEventArgs e)
+        {
+            this.txtbox_password.Text = "";
+            this.txtbox_password.HorizontalContentAlignment = HorizontalAlignment.Left;
+        }
     }
 }

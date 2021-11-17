@@ -59,6 +59,16 @@ void MessageCreator::CreateLoginFailedMessage()
     LastMessage.SetData(message_data);
 }
 
+void MessageCreator::CreateInvalidNumberOfTokensMessage()
+{
+    /*
+    * Creates a message that notifies the client the number of arguments given to the request is invalid
+    */
+    std::string message_data = "Invalid number of arguments specified!";
+    LastMessage.SetHeader(static_cast<char>(Action::NO_ACTION), static_cast<char>(ErrorCodes::INVALID_NUMBER_TOKENS), static_cast<int>(message_data.size()));
+    LastMessage.SetData(message_data);
+}
+
 void MessageCreator::CreateMessage(Action action, char errorNo, std::string data)
 {
     /*

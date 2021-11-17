@@ -98,18 +98,27 @@ const std::string RequestManager::RegisterNewAccount(uint64_t clientSocket, cons
 {
 	MessageCreator message_creator;
 
+	//Check if the client passed enough arguments to the request
+	if (messageTokens.size() != 3) {
+		message_creator.CreateInvalidNumberOfTokensMessage();
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
 	//Hash the password received from the client
 	std::string hashed_password = HashingAPI::HashString(messageTokens[1]);
 	/*
 	* Try to add the credentials into the database
 	* If the database query fails try to add it again
 	*/
-	int result = DatabaseAPI::AddAccountToDatabase(messageTokens[0], hashed_password);
+	int result = DatabaseAPI::AddAccountToDatabase(messageTokens[0], hashed_password, messageTokens[2]);
 	if (result == CONVERT_ERROR(ServerErrorCodes::COULD_NOT_CHECK_USERNAME_DUPLICATION) 
 		|| result == CONVERT_ERROR(ServerErrorCodes::COULD_NOT_INSERT_ACCOUNT_INTO_DATABASE)
 	) 
 	{
-		result = DatabaseAPI::AddAccountToDatabase(messageTokens[0], messageTokens[1]);
+		result = DatabaseAPI::AddAccountToDatabase(messageTokens[0], hashed_password, messageTokens[2]);
 	}
 
 	//If the query fails again then make an assertion
@@ -140,14 +149,43 @@ const std::string RequestManager::LoginIntoAccount(uint64_t clientSocket, const 
 	*/
 	MessageCreator message_creator;
 
+	//Check the number of arguments passed to the command
+	if (messageTokens.size() != 2) {
+		message_creator.CreateInvalidNumberOfTokensMessage();
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
 	SV_INFO("Client, socket: {0}, requested to login into account: {1}", clientSocket, messageTokens[0]);
+
 	std::string hashed_password = HashingAPI::HashString(messageTokens[1]);
 	bool result = DatabaseAPI::CheckCredentials(messageTokens[0], hashed_password);
+
 	if (result == false) {
 		message_creator.CreateLoginFailedMessage();
 		SV_WARN("Client, socket: {0}, failed to login, inexistent account or wrong credentials", clientSocket);
 	}
+	else {
+		message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(0), "Login successful");
+		SV_INFO("Client, socket: {0}, logged into account, username: {1}", clientSocket, messageTokens[0]);
 
+		//Check if the client isn't already logged in
+		if (connectedClients[clientSocket]->GetAccountUsername() != "") {
+			SV_WARN("Client, socket: {0}, failed to login, account already online, username: {1}", clientSocket, messageTokens[0]);
+			message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::ALREADY_LOGGED_IN), "Account is already in use!");
+
+			std::string message_client = message_creator.GetLastMessageAsString();
+			if (connectedClients[clientSocket]->SupportsEncryption() == true)
+				message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+			return message_client;
+		}
+
+		//Populate the client data structure
+		connectedClients[clientSocket]->SetAccountUsername(messageTokens[0]);
+	}
+	
 	std::string message_for_client = message_creator.GetLastMessageAsString();
 	if (connectedClients[clientSocket]->SupportsEncryption())
 		message_for_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());

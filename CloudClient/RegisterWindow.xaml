@@ -1,0 +1,41 @@
+﻿<Window x:Name="RegisterWindow1" x:Class="CloudClient.RegisterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:CloudClient"
+        mc:Ignorable="d"
+        Title="RegisterWindow" Height="450" Width="800" Background="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}" Closed="RegisterWindow1_Closed">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+
+        <Label x:Name="lbl_username" Grid.Column="0" Grid.Row="1" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Enter username"/>
+        <Label x:Name="lbl_password" Grid.Column="0" Grid.Row="2" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Enter password"/>
+        <Label x:Name="lbl_confirmpass" Grid.Column="0" Grid.Row="3" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Confirm password"/>
+        <Label x:Name="lbl_email" Grid.Column="0" Grid.Row="4" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Content="Enter email"/>
+
+        <TextBox x:Name="txtbox_username" Grid.Column="1" Grid.Row="1" Text="Please enter username" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="20" GotFocus="txtbox_username_GotFocus"/>
+        <TextBox x:Name="txtbox_password" Grid.Column="1" Grid.Row="2" Text="Please enter password" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="20" GotFocus="txtbox_password_GotFocus"/>
+        <PasswordBox x:Name="pwdbox_password" Grid.Column="1" Grid.Row="2" HorizontalAlignment="Stretch" VerticalAlignment="Center" Visibility="Hidden" Height="20"/>
+        <TextBox x:Name="txtbox_confirmpass" Grid.Column="1" Grid.Row="3" Text="Please confirm password" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="20" GotFocus="txtbox_confirmpass_GotFocus"/>
+        <PasswordBox x:Name="pwdbox_confirmpass" Grid.Column="1" Grid.Row="3" HorizontalAlignment="Stretch" VerticalAlignment="Center" Visibility="Hidden" Height="20"/>
+        <TextBox x:Name="txtbox_email" Grid.Column="1" Grid.Row="4" Text="Please enter email" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch" VerticalAlignment="Center" Height="20" GotFocus="txtbox_email_GotFocus"/>
+
+        <Button x:Name="btn_register" Grid.Column="1" Grid.Row="5" Content="Register" HorizontalAlignment="Center" VerticalAlignment="Center" Width="80" Height="30" Click="btn_register_Click"/>
+
+        <Label x:Name="lbl_result" Grid.Row="6" Grid.ColumnSpan="3" VerticalAlignment="Center" HorizontalAlignment="Stretch" Content="" HorizontalContentAlignment="Center" VerticalContentAlignment="Center" Foreground="Blue"/>
+    </Grid>
+</Window>

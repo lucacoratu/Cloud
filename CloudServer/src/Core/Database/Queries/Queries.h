@@ -28,7 +28,7 @@ public:
 //INSERT QUERIES
 class RegisterAccountQuery : public Query {
 public:
-	RegisterAccountQuery(const std::string& username, const std::string& hashedPassword);
+	RegisterAccountQuery(const std::string& username, const std::string& hashedPassword, const std::string& email);
 };
 
 

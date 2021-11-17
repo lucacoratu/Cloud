@@ -36,8 +36,8 @@ CheckCredentialsQuery::CheckCredentialsQuery(const std::string& username, const 
 
 
 //INSERTION QUERIES
-RegisterAccountQuery::RegisterAccountQuery(const std::string& username, const std::string& hashedPassword)
-	: Query("INSERT INTO TABLE Accounts VALUES( \'" + username + "\', \'" + hashedPassword + "\', " + "0);")
+RegisterAccountQuery::RegisterAccountQuery(const std::string& username, const std::string& hashedPassword, const std::string& email)
+	: Query("INSERT INTO Accounts(Username, Password, Email, LastActive) VALUES( \'" + username + "\', \'" + hashedPassword + "\', " + "\'" + email +"\', 0);")
 {
 
 }

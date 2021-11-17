@@ -91,7 +91,7 @@ void DatabaseAPI::CloseDatabaseConnection()
 	SV_INFO("Closed the connection to the database! Database relative path: {0}", databaseRelativePath);
 }
 
-int DatabaseAPI::AddAccountToDatabase(const std::string& username, const std::string& hashedPassword)
+int DatabaseAPI::AddAccountToDatabase(const std::string& username, const std::string& hashedPassword, const std::string& email)
 {
 	/*
 	* First checks if the username already exists in the table
@@ -119,7 +119,7 @@ int DatabaseAPI::AddAccountToDatabase(const std::string& username, const std::st
 
 	//Username does not exist in the database
 	char* error_message = nullptr;
-	int insert_exit = sqlite3_exec(database, RegisterAccountQuery(username, hashedPassword).GetQueryCharPtr(), 0, 0, &error_message);
+	int insert_exit = sqlite3_exec(database, RegisterAccountQuery(username, hashedPassword, email).GetQueryCharPtr(), 0, 0, &error_message);
 	if (insert_exit != SQLITE_OK) {
 		//The insert statement failed
 		SV_WARN("Could not insert into the account into the database! Username: {0}, HashedPassword: {1}", username, hashedPassword);

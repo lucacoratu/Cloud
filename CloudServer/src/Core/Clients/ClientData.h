@@ -19,11 +19,13 @@ public:
 	//Accessors
 	const std::string GetPrivateKey() const;
 	const std::string GetSecret() const;
+	const std::string GetAccountUsername() const;
 	bool SupportsEncryption();
 
 	//Modifiers
 	void SetSupportsEncryption(const bool supportsEncryption);
 	void SetSecret(const std::string& secret);
+	void SetAccountUsername(const std::string& username);
 };
 
 

@@ -25,6 +25,11 @@ const std::string ClientData::GetSecret() const
 	return this->secret;
 }
 
+const std::string ClientData::GetAccountUsername() const
+{
+	return this->accountUsername;
+}
+
 bool ClientData::SupportsEncryption()
 {
 	/*
@@ -42,4 +47,9 @@ void ClientData::SetSupportsEncryption(const bool supportsEncryption)
 void ClientData::SetSecret(const std::string& secret)
 {
 	this->secret = secret;
+}
+
+void ClientData::SetAccountUsername(const std::string& username)
+{
+	this->accountUsername = username;
 }

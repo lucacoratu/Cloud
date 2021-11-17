@@ -23,7 +23,7 @@ public:
 	static void CloseDatabaseConnection();
 
 	//Adds a new entry to the database with the new account
-	static int AddAccountToDatabase(const std::string& username, const std::string& hashedPassword);
+	static int AddAccountToDatabase(const std::string& username, const std::string& hashedPassword, const std::string& email);
 
 	//Checks the credentials of the user for login
 	static bool CheckCredentials(const std::string& username, const std::string& hashedPassword);

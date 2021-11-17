@@ -14,6 +14,7 @@ public:
 	void CreateRegisterCompletedMessage();
 	void CreateRegisterFailedMessage(const ErrorCodes& code);
 	void CreateLoginFailedMessage();
+	void CreateInvalidNumberOfTokensMessage();
 	void CreateMessage(Action action, char errorNo, std::string data);
 	std::string EncryptMessage(std::string key);
 	const std::string GetLastMessageAsString();
