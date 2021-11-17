@@ -121,6 +121,8 @@ const std::string RequestManager::RegisterNewAccount(uint64_t clientSocket, cons
 		result = DatabaseAPI::AddAccountToDatabase(messageTokens[0], hashed_password, messageTokens[2]);
 	}
 
+	//TO DO...Check for username duplication
+
 	//If the query fails again then make an assertion
 	SV_ASSERT(result == CONVERT_ERROR(ServerErrorCodes::NO_ERROR_FOUND), "Could not register the account into the database!");
 
