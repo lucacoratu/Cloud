@@ -11,7 +11,6 @@ struct MessageHeader {
 	int dataLength;
 };
 
-
 //Message Header: | action(1 bytes) | errorNo (1 byte) | dataLength(4 bytes) | data (dataLength bytes) |  
 
 //The full message

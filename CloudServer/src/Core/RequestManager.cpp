@@ -96,6 +96,10 @@ const std::string RequestManager::InvalidMessageLength(uint64_t clientSocket, co
 
 const std::string RequestManager::RegisterNewAccount(uint64_t clientSocket, const std::vector<std::string>& messageTokens)
 {
+	/*
+	* Registers a new account in the database if the username can't be found in the database
+	* Else it send an error message back to the client
+	*/
 	MessageCreator message_creator;
 
 	//Check if the client passed enough arguments to the request
@@ -193,6 +197,45 @@ const std::string RequestManager::LoginIntoAccount(uint64_t clientSocket, const 
 		message_for_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
 
 	return message_for_client;
+}
+
+const std::string RequestManager::LogoutFromAccount(uint64_t clientSocket, const std::vector<std::string>& messageTokens)
+{
+	/*
+	* Logs out the user from the account it is currently on
+	* If the user is not connected on an account then send an error message back to it
+	*/
+
+	MessageCreator message_creator;
+	if (messageTokens.size() != 1) {
+		message_creator.CreateInvalidNumberOfTokensMessage();
+		SV_WARN("Client, socket {0}, invalid number of arguments passed to logout", clientSocket);
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
+	SV_INFO("Client, socket {0}, requested to log out of account {1}", clientSocket, messageTokens[0]);
+
+	//Check if the user is connected on an account
+	if (connectedClients[clientSocket]->GetAccountUsername() == "") {
+		//It is not connected on an account
+		message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::NOT_LOGGED_IN), "Can't log out if you are not logged into an account!");
+		SV_WARN("Client, socket {0}, couldn't log out of account because it is not logged in", clientSocket);
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
+	//User can log out
+	connectedClients[clientSocket]->SetAccountUsername("");
+	message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::NO_ERROR_FOUND), "Succesfully logged out of account");
+	std::string message_client = message_creator.GetLastMessageAsString();
+	if (connectedClients[clientSocket]->SupportsEncryption() == true)
+		message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+	return message_client;
 }
 
 const std::string RequestManager::ReceivePublicKey(uint64_t clientSocket, const std::string message)
