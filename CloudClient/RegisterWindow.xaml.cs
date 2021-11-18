@@ -106,6 +106,7 @@ namespace CloudClient
             header.errorNo = (byte)(0);
             header.dataLength = (int)(message_data.Length);
 
+
             src.Connection.Message message = new src.Connection.Message(header, Encoding.ASCII.GetBytes(message_data));
 
             byte[] server_message = message.GetMessageAsByteArray();

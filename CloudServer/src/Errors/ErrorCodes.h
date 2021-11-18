@@ -8,6 +8,7 @@ enum class ErrorCodes {
 	MESSAGE_TOO_SHORT,
 	INVALID_NUMBER_TOKENS,
 	ALREADY_LOGGED_IN,
+	NOT_LOGGED_IN,
 };
 
 
