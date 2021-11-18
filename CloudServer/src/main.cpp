@@ -5,8 +5,6 @@ int main() {
 	CloudServer& server = CloudServer::createInstance("127.0.0.1", 54000);
 	server.init();
 
-	//comentariu de test
-
 	server.run();
 	
 	server.deleteInstance();

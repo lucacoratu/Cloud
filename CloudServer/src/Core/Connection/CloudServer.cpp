@@ -80,6 +80,10 @@ void CloudServer::onMessageReceived(uint64_t clientSocket, std::string& msg, int
 		//Client wants to log into an account 
 		result = RequestManager::LoginIntoAccount(clientSocket, message_parser.GetMessageTokens());
 		break;
+	case Action::LOGOUT_FROM_ACCOUNT:
+		//Client wants to log out from account
+		result = RequestManager::LogoutFromAccount(clientSocket, message_parser.GetMessageTokens());
+		break;
 	default:
 		//The action specified by the client is not a valid one
 		result = RequestManager::UnknownRequest(clientSocket);
