@@ -5,6 +5,7 @@
 #include "Core/Core.h"
 #include "Errors/ErrorCodes.h"
 #include "Core/Encryption/DiffieHellmanAPI.h"
+#include "Core/FilesystemAPI.h"
 
 std::map<uint64_t, ClientData*> RequestManager::connectedClients;
 
@@ -126,6 +127,10 @@ const std::string RequestManager::RegisterNewAccount(uint64_t clientSocket, cons
 	}
 
 	//TO DO...Check for username duplication
+	if (result == CONVERT_ERROR(ErrorCodes::USERNAME_ALREADY_USED)) {
+		message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(result), "An account with this username already exists");
+		SV_WARN("Client, socket {0}, tried to register an account with an already existing username!", clientSocket);
+	}
 
 	//If the query fails again then make an assertion
 	SV_ASSERT(result == CONVERT_ERROR(ServerErrorCodes::NO_ERROR_FOUND), "Could not register the account into the database!");
@@ -134,6 +139,9 @@ const std::string RequestManager::RegisterNewAccount(uint64_t clientSocket, cons
 	if (result == CONVERT_ERROR(ServerErrorCodes::NO_ERROR_FOUND)) {
 		message_creator.CreateRegisterCompletedMessage();
 		SV_INFO("New account has been created! Username: {0}", messageTokens[0]);
+
+		//Create the home directory for the user inside the entry directory
+		FilesystemAPI::CreateUserDirectory(messageTokens[0]);
 	}
 	else {
 		message_creator.CreateRegisterFailedMessage(static_cast<ErrorCodes>(result));
@@ -190,6 +198,9 @@ const std::string RequestManager::LoginIntoAccount(uint64_t clientSocket, const 
 
 		//Populate the client data structure
 		connectedClients[clientSocket]->SetAccountUsername(messageTokens[0]);
+
+		//Set the current directory to the home directory
+		connectedClients[clientSocket]->ChangeCurrentDirectory("./entry/" + messageTokens[0] + "/");
 	}
 	
 	std::string message_for_client = message_creator.GetLastMessageAsString();
@@ -232,6 +243,176 @@ const std::string RequestManager::LogoutFromAccount(uint64_t clientSocket, const
 	//User can log out
 	connectedClients[clientSocket]->SetAccountUsername("");
 	message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::NO_ERROR_FOUND), "Succesfully logged out of account");
+	std::string message_client = message_creator.GetLastMessageAsString();
+	if (connectedClients[clientSocket]->SupportsEncryption() == true)
+		message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+	return message_client;
+}
+
+const std::string RequestManager::ChangeDirectory(uint64_t clientSocket, const std::string& messageData)
+{
+	/*
+	* Changes the current directory of the client, if the directory exists
+	* Else it returns an error message
+	*/
+	MessageCreator message_creator;
+
+	//Check if the data from the client is correct
+	if (messageData == "") {
+		message_creator.CreateInvalidNumberOfTokensMessage();
+		SV_WARN("Client, socket {0}, invalid number of arguments passed to change directory", clientSocket);
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
+	std::string newPath = connectedClients[clientSocket]->GetActiveDirectory() + " " + messageData;
+	SV_INFO("Client, socket: {0}, requested to change the current directory {1} to {2}", clientSocket, connectedClients[clientSocket]->GetActiveDirectory(), newPath);
+
+	//Check if the directory exists
+	if (FilesystemAPI::ExistsDirectory(newPath) == false) {
+		SV_WARN("Client, socket: {0}, couldn't change the current directory, inexistent next directory {1}!", clientSocket, messageData);
+		message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::INEXISTENT_DIRECTORY), "Couldn't change the current directory, next directory doesn't exist!");
+
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
+	//Change the current directory
+	SV_INFO("Client, socket: {0}, changed the current directory from {1} to {2}", clientSocket, connectedClients[clientSocket]->GetActiveDirectory(), newPath);
+	connectedClients[clientSocket]->ChangeCurrentDirectory(newPath + "/");
+
+	message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(0), "Changed the current directory!");
+	std::string message_client = message_creator.GetLastMessageAsString();
+	if (connectedClients[clientSocket]->SupportsEncryption() == true)
+		message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+	return message_client;
+}
+
+const std::string RequestManager::CreateNewDirectory(uint64_t clientSocket, const std::string& messageData)
+{
+	/*
+	* Creates a new directory if one with the same name doesn't exist
+	* If the name is already used return a error message
+	*/
+	MessageCreator message_creator;
+
+	if (messageData == "") {
+		message_creator.CreateInvalidNumberOfTokensMessage();
+		SV_WARN("Client, socket {0}, invalid number of arguments passed to create new directory", clientSocket);
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
+	std::string newPath = connectedClients[clientSocket]->GetActiveDirectory() + " " + messageData;
+	SV_INFO("Client, socket: {0}, requested to create a directory {1} in {2}", clientSocket, messageData, connectedClients[clientSocket]->GetActiveDirectory());
+
+	//Check if the directory exists
+	if (FilesystemAPI::ExistsDirectory(newPath) == true) {
+		SV_WARN("Client, socket: {0}, couldn't create the directory {1}, one with the same name already exists!", clientSocket, messageData);
+		message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::INEXISTENT_DIRECTORY), "Couldn't create the directory, it already exists!");
+
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
+	FilesystemAPI::CreateNewDirectory(newPath);
+	SV_INFO("Client, socket: {0}, created directory {1} in {2}", clientSocket, messageData, connectedClients[clientSocket]->GetActiveDirectory());
+	
+	message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(0), "Created the directory!");
+	std::string message_client = message_creator.GetLastMessageAsString();
+	if (connectedClients[clientSocket]->SupportsEncryption() == true)
+		message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+	return message_client;
+}
+
+const std::string RequestManager::CreateNewFile(uint64_t clientSocket, const std::string& messageData)
+{
+	/*
+	* Creates a file in the current directory of the user if another one with the same name doesn't exist
+	* Else it returns an error message
+	*/
+	MessageCreator message_creator;
+
+	if (messageData == "") {
+		message_creator.CreateInvalidNumberOfTokensMessage();
+		SV_WARN("Client, socket {0}, invalid number of arguments passed to create new directory", clientSocket);
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
+	std::string newPath = connectedClients[clientSocket]->GetActiveDirectory() + " " + messageData;
+	SV_INFO("Client, socket: {0}, requested to create a file: {1} in {2}", clientSocket, messageData, connectedClients[clientSocket]->GetActiveDirectory());
+	
+	//Create new file function returns false if the file already exists
+	if (FilesystemAPI::CreateNewFile(newPath) == false) {
+		SV_WARN("Client, socket: {0}, couldn't create the file {1}, one with the same name already exists!", clientSocket, messageData);
+		message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::INEXISTENT_DIRECTORY), "Couldn't create the directory, it already exists!");
+
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
+	//The file was created
+	SV_INFO("Client, socket: {0}, created file {1} in {2}", clientSocket, messageData, connectedClients[clientSocket]->GetActiveDirectory());
+
+	message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(0), "Created the file!");
+	std::string message_client = message_creator.GetLastMessageAsString();
+	if (connectedClients[clientSocket]->SupportsEncryption() == true)
+		message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+	return message_client;
+}
+
+const std::string RequestManager::ViewDirectoryContent(uint64_t clientSocket, const std::string& messageData)
+{
+	/*
+	* Send back to the client all of the files and directories inside the current directory
+	*/
+	MessageCreator message_creator;
+
+	if (messageData == "") {
+		message_creator.CreateInvalidNumberOfTokensMessage();
+		SV_WARN("Client, socket {0}, invalid number of arguments passed to create new directory", clientSocket);
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
+	SV_INFO("Client, socket: {0}, requested the filenames of current directory {1}", clientSocket, connectedClients[clientSocket]->GetActiveDirectory());
+	auto filenames = FilesystemAPI::ViewFilesInDirectory(connectedClients[clientSocket]->GetActiveDirectory());
+
+	//If there are no files in the directory
+	if (filenames.size() == 0) {
+		SV_INFO("Client, socket {0}, there are no files in the current directory {1}", clientSocket, connectedClients[clientSocket]->GetActiveDirectory());
+		message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(0), "There are 0 files in this directory!");
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
+	//Put the files in the message and send the message back to the client
+	SV_INFO("Client, socket {0}, {1} filenames have been sent to it", clientSocket, filenames.size());
+	std::string message_data = "";
+
+	//TO DO...Decide on the delimiter between arguments
+	for (auto& details : filenames) {
+		message_data += details.name + " " + details.type + " ";
+	}
+
+	message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(0), message_data);
 	std::string message_client = message_creator.GetLastMessageAsString();
 	if (connectedClients[clientSocket]->SupportsEncryption() == true)
 		message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());

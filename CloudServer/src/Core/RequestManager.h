@@ -26,6 +26,11 @@ public:
 	static const std::string LoginIntoAccount(uint64_t clientSocket, const std::vector<std::string>& messageTokens);
 	static const std::string LogoutFromAccount(uint64_t clientSocket, const std::vector<std::string>& messageTokens);
 
+	//Working with files functions
+	static const std::string ChangeDirectory(uint64_t clientSocket, const std::string& messageData);
+	static const std::string CreateNewDirectory(uint64_t clientSocket, const std::string& messageData);
+	static const std::string CreateNewFile(uint64_t clientSocket, const std::string& messageData);
+	static const std::string ViewDirectoryContent(uint64_t clientSocket, const std::string& messageData);
 
 	//Accessors
 	static bool ClientSupportsEncryption(uint64_t clientSocket);

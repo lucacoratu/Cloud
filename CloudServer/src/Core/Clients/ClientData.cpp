@@ -30,6 +30,11 @@ const std::string ClientData::GetAccountUsername() const
 	return this->accountUsername;
 }
 
+const std::string ClientData::GetCurrentDirectory() const
+{
+	return this->currentDirectory;
+}
+
 bool ClientData::SupportsEncryption()
 {
 	/*
@@ -52,4 +57,10 @@ void ClientData::SetSecret(const std::string& secret)
 void ClientData::SetAccountUsername(const std::string& username)
 {
 	this->accountUsername = username;
+}
+
+void ClientData::ChangeCurrentDirectory(const std::string& currentDirectory)
+{
+	this->currentDirectory = currentDirectory;
+	//std::cout << "Current directory: " << currentDirectory;
 }

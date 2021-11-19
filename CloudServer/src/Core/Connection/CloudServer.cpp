@@ -53,12 +53,18 @@ void CloudServer::onMessageReceived(uint64_t clientSocket, std::string& msg, int
 	//TO DO...Server should support encrypted connection
 	if (RequestManager::ClientSupportsEncryption(clientSocket)) {
 		plain = message_parser.DecryptMessage(msg, RequestManager::GetClientSecret(clientSocket));
-		//Verify if the length of the message is long enough
-		if (plain.size() < sizeof(MessageHeader)) {
-			RequestManager::InvalidMessageLength(clientSocket, plain);
-		}
 	}
-	
+
+	//Verify if the length of the message is long enough
+	if (plain.size() < sizeof(MessageHeader)) {
+		plain = RequestManager::InvalidMessageLength(clientSocket, plain);
+
+		//Send the response after finishing the request back to the client
+		this->sendToClient(clientSocket, result, result.size());
+
+		return;
+	}
+
 	message_parser.CreateMessageFromString(plain);
 
 	//Get the action specified in the message
@@ -83,6 +89,22 @@ void CloudServer::onMessageReceived(uint64_t clientSocket, std::string& msg, int
 	case Action::LOGOUT_FROM_ACCOUNT:
 		//Client wants to log out from account
 		result = RequestManager::LogoutFromAccount(clientSocket, message_parser.GetMessageTokens());
+		break;
+	case Action::CHANGE_DIRECTORY:
+		//Client wants to change the current directory
+		result = RequestManager::ChangeDirectory(clientSocket, message_parser.GetMessageData());
+		break;
+	case Action::CREATE_NEW_DIRECTORY:
+		//Client wants to create a new directory in the current directory
+		result = RequestManager::CreateNewDirectory(clientSocket, message_parser.GetMessageData());
+		break;
+	case Action::CREATE_NEW_FILE:
+		//Client wants to create a new file in the current directory
+		result = RequestManager::CreateNewFile(clientSocket, message_parser.GetMessageData());
+		break;
+	case Action::VIEW_DIRECTORY_CONTENT:
+		//Client wants to view the current directory's contents
+		result = RequestManager::ViewDirectoryContent(clientSocket, message_parser.GetMessageData());
 		break;
 	default:
 		//The action specified by the client is not a valid one

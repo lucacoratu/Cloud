@@ -1,10 +1,10 @@
 #ifndef TCPLISTENER_H
 #define TCPLISTENER_H
 
-#include "Core/Log.h"
 #include "Core/Core.h"
 
 #include "Core/Database/DatabaseAPI.h"
+#include "Core/FilesystemAPI.h"
 
 class TcpListener
 {
@@ -17,6 +17,9 @@ public:
 
 		//Inititalize the database
 		DatabaseAPI::InitDatabase("./Database/cloud_database.db");
+
+		//Initialize the entry directory
+		FilesystemAPI::InitEntryDirectory();
 
 		//Inititalize the member variables
 		this->master = { 0 };
