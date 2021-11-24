@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -15,6 +14,7 @@ using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Text.RegularExpressions;
 using System.Text;
+using CloudClient.src;
 
 namespace CloudClient
 {
@@ -86,35 +86,8 @@ namespace CloudClient
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            byte[] bytes = new byte[this.loginView.getUsernameInput().Length + this.loginView.getPasswordInput().Length + 1];
-            byte[] usernameBytes = Encoding.ASCII.GetBytes(this.loginView.getUsernameInput());
-            byte[] passwordBytes = Encoding.ASCII.GetBytes(this.loginView.getPasswordInput());
-
-            for (int i = 0; i < usernameBytes.Length; i++)
-            {
-                bytes[i] = usernameBytes[i];
-            }
-            bytes[usernameBytes.Length] = (byte)32;
-
-            for (int i = usernameBytes.Length + 1; i < usernameBytes.Length + passwordBytes.Length + 1; i++)
-            {
-                bytes[i] = passwordBytes[i - usernameBytes.Length - 1];
-            }
-
-            src.Connection.MessageHeader header;
-            header.action = (byte)Action.LOGIN_INTO_ACCOUNT;
-            header.errorNo = (byte)0;
-            header.dataLength = bytes.Length;
-
-            src.Connection.Message message = new src.Connection.Message(header, bytes);
-
-            Byte[] serverMesssage = message.GetMessageAsByteArray();
-            src.Connection.Socket.SendToServer(serverMesssage, serverMesssage.Length);
-
-            src.Connection.Message response = new src.Connection.Message(src.Connection.Socket.GetServerAnswer());
-            string answer = Encoding.ASCII.GetString(response.GetMessageData());
-
-            MessageBox.Show(answer, "Message");
+            string answer = ServerAPI.LoginIntoAccount(this.loginView.usernameInput.Text, this.loginView.passwordInput.Password);
+            MessageBox.Show(answer);
         }
         private void VerifyUserInput()
         {
@@ -160,24 +133,8 @@ namespace CloudClient
                 return;
             }
 
-            //Send the information to the server and check it's response
-            string message_data = this.registerView.getUsernameInput() + " " + this.registerView.getPasswordInput() + " " + this.registerView.getEmailInput();
-            src.Connection.MessageHeader header = new src.Connection.MessageHeader();
-            header.action = (byte)Action.REGISTER_ACCOUNT;
-            header.errorNo = (byte)(0);
-            header.dataLength = (int)(message_data.Length);
-
-
-            src.Connection.Message message = new src.Connection.Message(header, Encoding.ASCII.GetBytes(message_data));
-
-            byte[] server_message = message.GetMessageAsByteArray();
-            src.Connection.Socket.SendToServer(server_message, server_message.Length);
-
-            byte[] server_answer = src.Connection.Socket.GetServerAnswer();
-
-            src.Connection.Message response = src.Connection.Socket.GetServerMessage();
-            string resp = Encoding.ASCII.GetString(response.GetMessageData());
-            MessageBox.Show(resp, "Message");
+            string answer = ServerAPI.RegisterAccount(this.registerView.UsernameInput.Text, this.registerView.PasswordInput.Password, this.registerView.EmailInput.Text);
+            MessageBox.Show(answer);
         }
     }
 }

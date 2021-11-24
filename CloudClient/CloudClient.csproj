@@ -60,6 +60,7 @@
     <Compile Include="src\Connection\Socket.cs" />
     <Compile Include="src\Encryption\DHExchange.cs" />
     <Compile Include="src\Encryption\EncryptionAPI.cs" />
+    <Compile Include="src\ServerAPI.cs" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Icons\home.png" />
