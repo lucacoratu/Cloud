@@ -38,13 +38,19 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <None Remove="Icons\home.png" />
+    <None Remove="Icons\window_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="RegisterWindow.xaml.cs" />
-    <Resource Include="Icons\window_icon.png" />
+    <Compile Include="MVVM\ViewModel\LoginViewModel.cs" />
+    <Compile Include="MVVM\ViewModel\MainViewModel.cs" />
+    <Compile Include="MVVM\View\LoginView.xaml.cs" />
+    <Compile Include="MVVM\View\RegisterView.xaml.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -54,5 +60,16 @@
     <Compile Include="src\Connection\Socket.cs" />
     <Compile Include="src\Encryption\DHExchange.cs" />
     <Compile Include="src\Encryption\EncryptionAPI.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Icons\home.png" />
+    <Resource Include="Icons\window_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Core\" />
+    <Folder Include="MVVM\Model\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
   </ItemGroup>
 </Project>

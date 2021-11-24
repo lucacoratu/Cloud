@@ -30,7 +30,7 @@ const std::string ClientData::GetAccountUsername() const
 	return this->accountUsername;
 }
 
-const std::string ClientData::GetCurrentDirectory() const
+const std::string ClientData::GetActiveDirectory() const
 {
 	return this->currentDirectory;
 }
