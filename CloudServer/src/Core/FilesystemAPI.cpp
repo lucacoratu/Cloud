@@ -75,9 +75,9 @@ bool FilesystemAPI::CreateNewFile(const std::string& path)
 std::vector<FileDetails> FilesystemAPI::ViewFilesInDirectory(const std::string& path)
 {
 	std::vector<FileDetails> filenames;
-	std::filesystem::path path_filesystem = path;
+	std::filesystem::directory_iterator it(path);
 
-	for (const auto& entry : std::filesystem::directory_iterator(path)) {
+	for (auto& entry : it) {
 		if (entry.is_directory())
 			filenames.push_back({ entry.path().filename().string(), "directory" });
 		else

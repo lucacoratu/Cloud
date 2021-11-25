@@ -87,7 +87,15 @@ namespace CloudClient
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             string answer = ServerAPI.LoginIntoAccount(this.loginView.usernameInput.Text, this.loginView.passwordInput.Password);
-            MessageBox.Show(answer);
+            //MessageBox.Show(answer);
+            //var resp = ServerAPI.ViewDirectoryContents("current");
+            //var resp = ServerAPI.CreateNewFile("testClient.txt");
+            //var resp2 = ServerAPI.CreateNewDirectory("testDirectoryClient");
+            var resp3 = ServerAPI.ChangeDirectory("..");
+            var resp4 = ServerAPI.ChangeDirectory("testDirectoryClient");
+            var ans = ServerAPI.ViewDirectoryContents("current");
+            var resp5 = ServerAPI.ChangeDirectory("..");
+            var ans2 = ServerAPI.ViewDirectoryContents("current");
         }
         private void VerifyUserInput()
         {

@@ -13,6 +13,11 @@ namespace CloudClient
         TEST_CONNECTION = 3,
         REGISTER_ACCOUNT = 4,
         LOGIN_INTO_ACCOUNT = 5,
+        LOGOUT_FROM_ACCOUNT,
+        CHANGE_DIRECTORY,
+        CREATE_NEW_DIRECTORY,
+        CREATE_NEW_FILE,
+        VIEW_DIRECTORY_CONTENT,
     };
 
 }
