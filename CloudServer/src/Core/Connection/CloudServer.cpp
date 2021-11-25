@@ -56,7 +56,7 @@ void CloudServer::onMessageReceived(uint64_t clientSocket, std::string& msg, int
 	}
 
 	//Verify if the length of the message is long enough
-	if (plain.size() < sizeof(MessageHeader)) {
+	if (plain.size() <= 6) {
 		plain = RequestManager::InvalidMessageLength(clientSocket, plain);
 
 		//Send the response after finishing the request back to the client

@@ -94,7 +94,7 @@ namespace CloudClient
             var resp3 = ServerAPI.ChangeDirectory("..");
             var resp4 = ServerAPI.ChangeDirectory("testDirectoryClient");
             var ans = ServerAPI.ViewDirectoryContents("current");
-            var resp5 = ServerAPI.ChangeDirectory("..");
+            var resp5 = ServerAPI.ChangeDirectory(".");
             var ans2 = ServerAPI.ViewDirectoryContents("current");
         }
         private void VerifyUserInput()

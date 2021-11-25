@@ -267,6 +267,15 @@ const std::string RequestManager::ChangeDirectory(uint64_t clientSocket, const s
 		return message_client;
 	}
 
+	if (messageData == ".") {
+		SV_WARN("Client, socket {0}, requested to change the current directory to the same directory", clientSocket);
+		message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::INEXISTENT_DIRECTORY), "Can't change to the same directory!");
+		std::string message_client = message_creator.GetLastMessageAsString();
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		return message_client;
+	}
+
 	std::string newPath = connectedClients[clientSocket]->GetActiveDirectory();
 	if (messageData == "..") {
 		//The client wants to go back to the parent directory
