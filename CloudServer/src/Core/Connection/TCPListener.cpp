@@ -3,6 +3,74 @@
 
 #include "Core/Log.h"
 
+#include <mutex>
+#include <condition_variable>
+#include <thread>
+
+struct ThreadMessage {
+	std::string message;
+	uint64_t clientSocket;
+};
+
+//Thread pool
+static std::thread thread_pool[4];
+
+//Mutex for the message queue
+static std::mutex mutex;
+
+//Condition variable
+static std::condition_variable condition_var;
+
+//The queue of messages
+static std::queue<ThreadMessage> message_queue;
+
+//Thread functions
+void TcpListener::SubmitMessage(uint64_t clientSocket, std::string message) {
+	//Producer thread
+	//When a client sends a message to the server the main thread (only one who can submit a message)
+	//Creates a task for the consumers
+
+	//Lock the message_queue
+	std::lock_guard<std::mutex> lock(mutex);
+	ThreadMessage message_thread = { message, clientSocket };
+	message_queue.push(message_thread);
+	condition_var.notify_one();
+	//Unlock the message queue (the mutex unlocks when the scope ends -- lock guard is scope based)
+}
+
+void TcpListener::ExecuteThread() {
+	/*
+	*Take a message from the message queue
+	*If there are any messages in the queue
+	*If there are no messages in the queue then wait for messages to appear
+	*/
+	while (1) {
+		ThreadMessage message;
+		int found = 0;
+
+		{
+			//The lock is unique to this scope
+			std::unique_lock<std::mutex> lock(mutex);
+			condition_var.wait(lock, [&]() {
+				//Waits until the message queue is not empty 
+				return !message_queue.empty();
+			});
+
+			if (!message_queue.empty()) {
+				message = message_queue.front();
+				found = 1;
+				message_queue.pop();
+			}
+			//Mutex unlocks here
+		}
+		
+		if(found == 1)
+			//The thread got a message to work on
+			onMessageReceived(message.clientSocket, message.message, static_cast<int>(message.message.size()));
+	}
+
+}
+
 int TcpListener::init()
 {
 	SV_INFO("Server is initializing...");
@@ -52,6 +120,13 @@ int TcpListener::init()
 	// connections 
 	FD_SET(s_socket, &master);
 
+	//Inititalize the thread pool
+	for(int i =0; i < 4; i++) {
+		thread_pool[i] = std::thread([&]() {
+			ExecuteThread();
+		});
+	}
+
 	return 0;
 }
 
@@ -59,7 +134,6 @@ int TcpListener::run()
 {
 	bool running = true;
 
-	//std::cout << "Server is running...\r\n";
 	SV_INFO("Server is starting...");
 
 	while (running)
@@ -69,10 +143,7 @@ int TcpListener::run()
 
 		// See who's talking to us
 		int socketCount;
-		std::thread th1([&socketCount, &copy]() {
-			socketCount = select(0, &copy, nullptr, nullptr, nullptr);
-			});
-		th1.join();
+		socketCount = select(0, &copy, nullptr, nullptr, nullptr);
 
 
 		// Loop through all the current connections / potential connect
@@ -91,70 +162,64 @@ int TcpListener::run()
 			if (sock == s_socket)
 			{
 				// Accept a new connection
-				std::thread th2([&]() {
-					SOCKET client = accept(s_socket, (sockaddr*)&client_info, p);
+				SOCKET client = accept(s_socket, (sockaddr*)&client_info, p);
 
-					//char* connected_ip = inet_ntoa(client_info.sin_addr);
-					//int port = ntohs(client_info.sin_port);
-					//std::stringstream ss; ss << connected_ip << ":" << port;
+				//char* connected_ip = inet_ntoa(client_info.sin_addr);
+				//int port = ntohs(client_info.sin_port);
+				//std::stringstream ss; ss << connected_ip << ":" << port;
 
-					// Add the new connection to the list of connected clients
-					FD_SET(client, &master);
+				// Add the new connection to the list of connected clients
+				FD_SET(client, &master);
 
-					onClientConnected(client);
-					});
-
-				th2.join();
+				onClientConnected(client);
 			}
 			else // It's an inbound message
 			{
-				std::thread th3([&]() {
-					const unsigned int MAX_BUF_LENGTH = 1024;
-					std::vector<char> buffer(MAX_BUF_LENGTH);
+				const unsigned int MAX_BUF_LENGTH = 1024;
+				std::vector<char> buffer(MAX_BUF_LENGTH);
 
-					// Receive message
-					int bytesIn = recv(sock, &buffer[0], static_cast<int>(buffer.size()), 0);
-					if (bytesIn <= 0)
-					{
-						// Drop the client
-						onClientDisconnected(sock);
-						closesocket(sock);
-						FD_CLR(sock, &this->master);
-					}
-					else if (bytesIn == MAX_BUF_LENGTH) {
-						std::vector<char> buffer(MAX_BUF_LENGTH);
-						std::string rcv;
-						int bytesReceived = 0;
+				// Receive message
+				int bytesIn = recv(sock, &buffer[0], static_cast<int>(buffer.size()), 0);
+				if (bytesIn <= 0)
+				{
+					// Drop the client
+					onClientDisconnected(sock);
+					closesocket(sock);
+					FD_CLR(sock, &this->master);
+				}
+				//else if (bytesIn == MAX_BUF_LENGTH) {
+				//	std::vector<char> buffer(MAX_BUF_LENGTH);
+				//	std::string rcv;
+				//	int bytesReceived = 0;
 
-						do {
-							bytesReceived = recv(sock, &buffer[0], static_cast<int>(buffer.size()), 0);
-							// append string from buffer.
-							if (bytesReceived <= 0) {
-								// Drop the client
-								onClientDisconnected(sock);
-								closesocket(sock);
-								FD_CLR(sock, &this->master);
-							}
-							else {
-								rcv.append(buffer.cbegin(), buffer.cend());
-							}
-						} while (bytesReceived == MAX_BUF_LENGTH);
+				//	do {
+				//		bytesReceived = recv(sock, &buffer[0], static_cast<int>(buffer.size()), 0);
+				//		// append string from buffer.
+				//		if (bytesReceived <= 0) {
+				//			// Drop the client
+				//			onClientDisconnected(sock);
+				//			closesocket(sock);
+				//			FD_CLR(sock, &this->master);
+				//		}
+				//		else {
+				//			rcv.append(buffer.cbegin(), buffer.cend());
+				//		}
+				//	} while (bytesReceived == MAX_BUF_LENGTH);
 
 
-						onMessageReceived(sock, rcv, static_cast<int>(rcv.size()));
-						rcv.clear();
-						return;
-					}
-					else {
-						std::string rcv;
-						rcv.append(buffer.cbegin(), buffer.cend());
-						onMessageReceived(sock, rcv, static_cast<int>(rcv.size()));
-						rcv.clear();
-					}
-
-				});
-
-				th3.join();
+				//	onMessageReceived(sock, rcv, static_cast<int>(rcv.size()));
+				//	rcv.clear();
+				//	return;
+				//}
+				else {
+					std::string rcv;
+					rcv.append(buffer.cbegin(), buffer.cend());
+					
+					this->SubmitMessage(sock, rcv);
+					
+					//onMessageReceived(sock, rcv, static_cast<int>(rcv.size()));
+					rcv.clear();
+				}
 			}
 		}
 

@@ -58,8 +58,9 @@ private:
 	uint64_t		s_socket;					// Internal FD for the listening socket
 	fd_set			master;						// Master file descriptor set
 
-protected:
-	//Variables
+private:
+	void SubmitMessage(uint64_t clientSocket, std::string message);
+	void ExecuteThread();
 };
 
 
