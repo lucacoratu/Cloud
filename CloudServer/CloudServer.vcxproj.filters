@@ -49,6 +49,9 @@
     <Filter Include="src\Message">
       <UniqueIdentifier>{E1A63828-4D5C-B11D-D650-ABF44205A821}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\Benchmarking">
+      <UniqueIdentifier>{076fa5a9-40bf-4638-943e-41e5203bc7b4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Core\Clients\ClientData.h">
@@ -111,7 +114,9 @@
     <ClInclude Include="src\cloudpch.h">
       <Filter>src</Filter>
     </ClInclude>
-    <ClInclude Include="src\Benchmarking\Timer.h" />
+    <ClInclude Include="src\Benchmarking\Timer.h">
+      <Filter>src\Benchmarking</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\AES\src\AES.cpp">
@@ -186,6 +191,8 @@
     <ClCompile Include="src\Core\FilesystemAPI.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
-    <ClCompile Include="src\Benchmarking\Timer.cpp" />
+    <ClCompile Include="src\Benchmarking\Timer.cpp">
+      <Filter>src\Benchmarking</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

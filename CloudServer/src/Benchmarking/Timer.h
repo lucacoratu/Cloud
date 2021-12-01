@@ -11,7 +11,7 @@ private:
 	std::chrono::time_point<std::chrono::high_resolution_clock> StartTimepoint;
 public:
 	Timer() {
-		std::chrono::high_resolution_clock::now();
+		this->StartTimepoint = std::chrono::high_resolution_clock::now();
 	}
 	~Timer() {
 		Stop();
