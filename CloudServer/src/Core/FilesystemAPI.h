@@ -13,6 +13,7 @@ public:
 	static void InitEntryDirectory();
 	static bool CreateUserDirectory(std::string username);
 	static bool ExistsDirectory(const std::string& path);
+	static bool ExistsFile(const std::string& path);
 	static bool CreateNewDirectory(const std::string& path);
 	static bool CreateNewFile(const std::string& path);
 	static std::vector<FileDetails> ViewFilesInDirectory(const std::string& path);

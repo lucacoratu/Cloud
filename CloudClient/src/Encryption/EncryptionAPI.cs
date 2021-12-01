@@ -52,7 +52,7 @@ namespace CloudClient.src.Encryption
 
         }
 
-        public static string DecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
+        public static byte[] DecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)
         {
             // Check arguments.
             if (cipherText == null || cipherText.Length <= 0)
@@ -64,7 +64,8 @@ namespace CloudClient.src.Encryption
 
             // Declare the string used to hold
             // the decrypted text.
-            string plaintext = null;
+            //string plaintext = null;
+            byte[] result;
 
             // Create an RijndaelManaged object
             // with the specified key and IV.
@@ -81,21 +82,17 @@ namespace CloudClient.src.Encryption
                 // Create the streams used for decryption.
                 using (MemoryStream msDecrypt = new MemoryStream(cipherText))
                 {
-                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Read))
+                    using (CryptoStream csDecrypt = new CryptoStream(msDecrypt, decryptor, CryptoStreamMode.Write))
                     {
-                        using (StreamReader srDecrypt = new StreamReader(csDecrypt))
-                        {
-
-                            // Read the decrypted bytes from the decrypting stream
-                            // and place them in a string.
-                            plaintext = srDecrypt.ReadToEnd();
-                        }
+                        csDecrypt.Write(cipherText, 0, cipherText.Length);
+                        csDecrypt.Close();
                     }
+                    result = msDecrypt.ToArray();
                 }
 
             }
 
-            return plaintext;
+            return result;
         }
     }
 }

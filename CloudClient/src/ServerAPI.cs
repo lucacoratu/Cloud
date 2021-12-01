@@ -5,6 +5,7 @@ using CloudClient.src.Connection;
 using CloudClient.src.Encryption;
 using System.Windows;
 using System.Windows.Controls;
+using System.IO;
 
 namespace CloudClient.src
 {
@@ -98,7 +99,7 @@ namespace CloudClient.src
             //Break the string into list of file details
             var tokens = resp.Split(' ');
 
-            for(int i = 0; i < tokens.Length - 1; i += 2)
+            for (int i = 0; i < tokens.Length - 1; i += 2)
             {
                 FileDetails details = new FileDetails();
                 details.filename = tokens[i];
@@ -173,6 +174,124 @@ namespace CloudClient.src
             MessageBox.Show(resp);
 
             return resp;
+        }
+
+        public static string DownloadFile(string filename, string localFilename)
+        {
+            //Clear the local filename if it exists
+            if (File.Exists(localFilename))
+            {
+                File.WriteAllText(localFilename, String.Empty);
+            }
+            else
+            {
+                File.Create(localFilename);
+            }
+
+            MessageHeader header_download = new MessageHeader();
+            header_download.action = (byte)Action.DOWNLOAD_FILE;
+            header_download.errorNo = (byte)0;
+            header_download.dataLength = filename.Length;
+
+            Message message_download = new Message(header_download, Encoding.ASCII.GetBytes(filename));
+            byte[] server_message = message_download.GetMessageAsByteArray();
+
+            Socket.SendToServer(server_message, server_message.Length);
+
+            Message server_answer = Socket.GetServerMessage();
+            string resp = Encoding.ASCII.GetString(server_answer.GetMessageData());
+
+            //MessageBox.Show(resp);
+
+            if (resp == "File does not exist!")
+            {
+                return resp;
+            }
+
+            MessageHeader header_start_trans = new MessageHeader();
+            header_start_trans.action = (byte)Action.START_TRANSMISSION;
+            header_start_trans.errorNo = (byte)0;
+            header_start_trans.dataLength = filename.Length;
+
+            Message message_start_trans = new Message(header_start_trans, Encoding.ASCII.GetBytes(filename));
+            byte[] server_message_trans = message_start_trans.GetMessageAsByteArray();
+
+            Socket.SendToServer(server_message_trans, server_message.Length);
+
+            Message server_answer2 = Socket.GetServerMessage();
+            string resp2 = Encoding.ASCII.GetString(server_answer2.GetMessageData());
+
+            if (server_answer2.GetMessageAction() == (byte)Action.LAST_CHUNK)
+            {
+                MessageHeader header_ack = new MessageHeader();
+                header_ack.action = (byte)Action.ACKNOWLEDGEMENT;
+                header_ack.errorNo = (byte)0;
+                header_ack.dataLength = filename.Length;
+                Message message_ack = new Message(header_ack, Encoding.ASCII.GetBytes(filename));
+                byte[] server_message_ack = message_ack.GetMessageAsByteArray();
+
+                //File.AppendAllText(localFilename, resp2);
+                using (var stream = new FileStream(localFilename, FileMode.Append))
+                {
+                    byte[] bytes = server_answer2.GetMessageData();
+                    stream.Write(bytes, 0, bytes.Length);
+                }
+
+                Socket.SendToServer(server_message_ack, server_message_ack.Length);
+
+                server_answer2 = Socket.GetServerMessage();
+                resp2 = Encoding.ASCII.GetString(server_answer2.GetMessageData());
+
+                //MessageBox.Show(resp2);
+                return resp2;
+            }
+
+            Message server_answer3 = server_answer2;
+            string resp3 = resp2;
+            do
+            {
+                //Append the text into the file
+                using (var stream = new FileStream(localFilename, FileMode.Append, FileAccess.Write, FileShare.Read))
+                {
+                    byte[] bytes = server_answer3.GetMessageData();
+                    stream.Write(bytes, 0, bytes.Length);
+                }
+
+                MessageHeader header_ack = new MessageHeader();
+                header_ack.action = (byte)Action.ACKNOWLEDGEMENT;
+                header_ack.errorNo = (byte)0;
+                header_ack.dataLength = filename.Length;
+                Message message_ack = new Message(header_ack, Encoding.ASCII.GetBytes(filename));
+                byte[] server_message_ack = message_ack.GetMessageAsByteArray();
+
+                Socket.SendToServer(server_message_ack, server_message_ack.Length);
+
+                server_answer3 = Socket.GetServerMessage();
+                resp3 = Encoding.ASCII.GetString(server_answer3.GetMessageData());
+            } while (server_answer3.GetMessageAction() != (byte)Action.LAST_CHUNK);
+
+            //Append the thext into the file
+            using (var stream = new FileStream(localFilename, FileMode.Append, FileAccess.Write, FileShare.Read))
+            {
+                byte[] bytes = server_answer3.GetMessageData();
+                stream.Write(bytes, 0, bytes.Length);
+            }
+
+            //Send the last aknowledgement
+            MessageHeader header_ack_final = new MessageHeader();
+            header_ack_final.action = (byte)Action.ACKNOWLEDGEMENT;
+            header_ack_final.errorNo = (byte)0;
+            header_ack_final.dataLength = filename.Length;
+            Message message_ack_final = new Message(header_ack_final, Encoding.ASCII.GetBytes(filename));
+            byte[] server_message_ack_final = message_ack_final.GetMessageAsByteArray();
+
+            Socket.SendToServer(server_message_ack_final, server_message_ack_final.Length);
+
+            server_answer3 = Socket.GetServerMessage();
+            resp3 = Encoding.ASCII.GetString(server_answer3.GetMessageData());
+
+            MessageBox.Show(resp3);
+            return resp2;
         }
     }
 }

@@ -1,6 +1,14 @@
 #ifndef CLIENTDATA_H
 #define CLIENTDATA_H
 
+
+//Details about the file the user wants to download
+struct FileCursor {
+	std::string filename = "";
+	uint32_t fileChunkNumber = 0;
+	uint32_t totalNumberChunks = 0;
+};
+
 class ClientData {
 private:
 	//Member variables
@@ -9,6 +17,9 @@ private:
 
 	//Current directory the user is in
 	std::string currentDirectory;
+
+	//The files he wants to download
+	std::vector<FileCursor> filesToDownload;
 
 	//Diffie-Hellman variables
 	std::string secret;
@@ -23,6 +34,7 @@ public:
 	const std::string GetSecret() const;
 	const std::string GetAccountUsername() const;
 	const std::string GetActiveDirectory() const;
+	const FileCursor GetFileCursor(std::string filename) const;
 	bool SupportsEncryption();
 
 	//Modifiers
@@ -30,6 +42,10 @@ public:
 	void SetSecret(const std::string& secret);
 	void SetAccountUsername(const std::string& username);
 	void ChangeCurrentDirectory(const std::string& currentDirectory);
+	void AddDownloadFile(std::string filename);
+	void EraseDownloadFile(std::string filename);
+	void IncrementChunkNumber(std::string filename);
+
 };
 
 

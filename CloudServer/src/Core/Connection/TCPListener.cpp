@@ -8,8 +8,8 @@
 #include <thread>
 
 struct ThreadMessage {
-	std::string message;
-	uint64_t clientSocket;
+	std::string message = "";
+	uint64_t clientSocket = 0;
 };
 
 //Thread pool
@@ -54,7 +54,7 @@ void TcpListener::ExecuteThread() {
 			condition_var.wait(lock, [&]() {
 				//Waits until the message queue is not empty 
 				return !message_queue.empty();
-			});
+				});
 
 			if (!message_queue.empty()) {
 				message = message_queue.front();
@@ -63,8 +63,8 @@ void TcpListener::ExecuteThread() {
 			}
 			//Mutex unlocks here
 		}
-		
-		if(found == 1)
+
+		if (found == 1)
 			//The thread got a message to work on
 			onMessageReceived(message.clientSocket, message.message, static_cast<int>(message.message.size()));
 	}
@@ -121,10 +121,10 @@ int TcpListener::init()
 	FD_SET(s_socket, &master);
 
 	//Inititalize the thread pool
-	for(int i =0; i < 4; i++) {
+	for (int i = 0; i < 4; i++) {
 		thread_pool[i] = std::thread([&]() {
 			ExecuteThread();
-		});
+			});
 	}
 
 	return 0;
@@ -175,7 +175,7 @@ int TcpListener::run()
 			}
 			else // It's an inbound message
 			{
-				const unsigned int MAX_BUF_LENGTH = 1024;
+				const unsigned int MAX_BUF_LENGTH = 32768;
 				std::vector<char> buffer(MAX_BUF_LENGTH);
 
 				// Receive message
@@ -214,11 +214,12 @@ int TcpListener::run()
 				else {
 					std::string rcv;
 					rcv.append(buffer.cbegin(), buffer.cend());
-					
+
 					this->SubmitMessage(sock, rcv);
-					
+
 					//onMessageReceived(sock, rcv, static_cast<int>(rcv.size()));
 					rcv.clear();
+					buffer.clear();
 				}
 			}
 		}

@@ -34,7 +34,7 @@ bool FilesystemAPI::CreateUserDirectory(std::string username)
 	* Creates the directory inside the entry directory for each user
 	*/
 	std::filesystem::path path = "./entry/" + username;
-	
+
 	bool res = std::filesystem::create_directory(path);
 
 	return res;
@@ -48,6 +48,18 @@ bool FilesystemAPI::ExistsDirectory(const std::string& path)
 	std::filesystem::path path_filesystem = path;
 
 	return (std::filesystem::exists(path_filesystem));
+}
+
+bool FilesystemAPI::ExistsFile(const std::string& path)
+{
+	std::ifstream in(path);
+	if (!in.is_open()) {
+		in.close();
+		return false;
+	}
+
+	in.close();
+	return true;
 }
 
 bool FilesystemAPI::CreateNewDirectory(const std::string& path)

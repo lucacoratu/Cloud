@@ -32,6 +32,13 @@ public:
 	static const std::string CreateNewFile(uint64_t clientSocket, const std::string& messageData);
 	static const std::string ViewDirectoryContent(uint64_t clientSocket, const std::string& messageData);
 
+	//Download functions
+	static const std::string DownloadFile(uint64_t clientSocket, const std::string& messageData);
+	static const std::string StartTransmission(uint64_t clientSocket, const std::string& messageData);
+	static const std::string Acknowledgement(uint64_t clientSocket, const std::string& messageData);
+
+	//Upload functions
+
 	//Accessors
 	static bool ClientSupportsEncryption(uint64_t clientSocket);
 	static std::string GetClientSecret(uint64_t clientSocket);

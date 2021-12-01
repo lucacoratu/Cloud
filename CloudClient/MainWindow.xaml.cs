@@ -24,7 +24,7 @@ namespace CloudClient
 
     public partial class MainWindow : Window
 
-    { 
+    {
         private LoginView loginView;
         private RegisterView registerView;
         public MainWindow()
@@ -68,7 +68,7 @@ namespace CloudClient
         private void SwitchToRegisterView(object sender, RoutedEventArgs e)
         {
             mainGrid.Children.Clear();
-            registerView = new RegisterView(SwitchToLoginView, RegisterButton_Click );
+            registerView = new RegisterView(SwitchToLoginView, RegisterButton_Click);
             mainGrid.Children.Add(registerView);
         }
 
@@ -91,11 +91,14 @@ namespace CloudClient
             //var resp = ServerAPI.ViewDirectoryContents("current");
             //var resp = ServerAPI.CreateNewFile("testClient.txt");
             //var resp2 = ServerAPI.CreateNewDirectory("testDirectoryClient");
-            var resp3 = ServerAPI.ChangeDirectory("..");
+            /*var resp3 = ServerAPI.ChangeDirectory("..");
             var resp4 = ServerAPI.ChangeDirectory("testDirectoryClient");
             var ans = ServerAPI.ViewDirectoryContents("current");
-            var resp5 = ServerAPI.ChangeDirectory(".");
+            var resp5 = ServerAPI.ChangeDirectory("..");
             var ans2 = ServerAPI.ViewDirectoryContents("current");
+            */
+
+            var ans3 = ServerAPI.DownloadFile("lab5.pdf", "lab5.pdf");
         }
         private void VerifyUserInput()
         {
@@ -137,7 +140,7 @@ namespace CloudClient
             }
             catch (Exception exp)
             {
-               // this.lbl_result.Content = exp.Message;
+                // this.lbl_result.Content = exp.Message;
                 return;
             }
 

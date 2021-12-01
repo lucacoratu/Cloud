@@ -106,6 +106,18 @@ void CloudServer::onMessageReceived(uint64_t clientSocket, std::string& msg, int
 		//Client wants to view the current directory's contents
 		result = RequestManager::ViewDirectoryContent(clientSocket, message_parser.GetMessageData());
 		break;
+	case Action::DOWNLOAD_FILE:
+		//Client wants to download a file
+		result = RequestManager::DownloadFile(clientSocket, message_parser.GetMessageData());
+		break;
+	case Action::START_TRANSMISSION:
+		//Client wants the server to start transmitting the file
+		result = RequestManager::StartTransmission(clientSocket, message_parser.GetMessageData());
+		break;
+	case Action::ACKNOWLEDGEMENT:
+		//Client sends the aknowledgement that it received the chunk
+		result = RequestManager::Acknowledgement(clientSocket, message_parser.GetMessageData());
+		break;
 	default:
 		//The action specified by the client is not a valid one
 		result = RequestManager::UnknownRequest(clientSocket);

@@ -115,24 +115,23 @@ namespace CloudClient.src.Connection
                 // Encrypt the string to an array of bytes.
                 encrypted = Encryption.EncryptionAPI.EncryptStringToBytes(System.Text.Encoding.UTF8.GetString(data, 0, dataLength), secret, iv);
 
-                byte[] answer = new byte[256];
-                Array.Clear(answer, 0, 256); 
+                byte[] answer = new byte[32768];
+                Array.Clear(answer, 0, 32768);
                 stream.Write(encrypted, 0, encrypted.Length);
-                int bytesRead = stream.Read(answer, 0, 256);
+                int bytesRead = stream.Read(answer, 0, 32768);
 
                 byte[] cypherText = new byte[bytesRead];
-                for(int i =0; i<bytesRead; i++)
+                for (int i = 0; i < bytesRead; i++)
                 {
                     cypherText[i] = answer[i];
                 }
 
-                string decryptedString = Encryption.EncryptionAPI.DecryptStringFromBytes(cypherText, secret, iv);
-                serverAnswer = Encoding.UTF8.GetBytes(decryptedString);
-
+                serverAnswer = Encryption.EncryptionAPI.DecryptStringFromBytes(cypherText, secret, iv);
                 //Create a message from the server answer
                 serverMessage = new src.Connection.Message(serverAnswer);
             }
-            catch(ArgumentNullException e){
+            catch (ArgumentNullException e)
+            {
                 MessageBox.Show(e.Message, "Error::Socket.SendToServer", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

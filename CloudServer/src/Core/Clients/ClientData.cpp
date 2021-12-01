@@ -35,6 +35,19 @@ const std::string ClientData::GetActiveDirectory() const
 	return this->currentDirectory;
 }
 
+const FileCursor ClientData::GetFileCursor(std::string filename) const
+{
+	FileCursor cursor = { "", 0 };
+
+	for (size_t i = 0; i < this->filesToDownload.size(); i++)
+	{
+		if (filesToDownload[i].filename == filename)
+			return filesToDownload[i];
+	}
+
+	return cursor;
+}
+
 bool ClientData::SupportsEncryption()
 {
 	/*
@@ -63,4 +76,34 @@ void ClientData::ChangeCurrentDirectory(const std::string& currentDirectory)
 {
 	this->currentDirectory = currentDirectory;
 	//std::cout << "Current directory: " << currentDirectory;
+}
+
+void ClientData::AddDownloadFile(std::string filename)
+{
+	std::ifstream in(filename);
+	// get length of file:
+	in.seekg(0, in.end);
+	int length = in.tellg();
+	in.seekg(0, in.beg);
+
+	//Calculate the number of chunks it has
+	uint32_t totalNumberChunks = length / 4090;
+
+	this->filesToDownload.push_back({ filename, 0, totalNumberChunks });
+}
+
+void ClientData::EraseDownloadFile(std::string filename)
+{
+	for (size_t i = 0; i < this->filesToDownload.size(); i++) {
+		if (this->filesToDownload[i].filename == filename)
+			this->filesToDownload.erase(this->filesToDownload.begin() + i);
+	}
+}
+
+void ClientData::IncrementChunkNumber(std::string filename)
+{
+	for (size_t i = 0; i < this->filesToDownload.size(); i++) {
+		if (this->filesToDownload[i].filename == filename)
+			this->filesToDownload[i].fileChunkNumber++;
+	}
 }
