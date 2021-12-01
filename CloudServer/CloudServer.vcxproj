@@ -134,6 +134,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="src\Benchmarking\Timer.h" />
     <ClInclude Include="src\Core\Clients\ClientData.h" />
     <ClInclude Include="src\Core\Connection\CloudServer.h" />
     <ClInclude Include="src\Core\Connection\TCPListener.h" />
@@ -168,6 +169,7 @@
     <ClCompile Include="External\sqlite\sqlite3.c">
       <PrecompiledHeader>NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\Benchmarking\Timer.cpp" />
     <ClCompile Include="src\Core\Clients\ClientData.cpp" />
     <ClCompile Include="src\Core\Connection\CloudServer.cpp" />
     <ClCompile Include="src\Core\Connection\TCPListener.cpp" />

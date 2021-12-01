@@ -111,6 +111,7 @@
     <ClInclude Include="src\cloudpch.h">
       <Filter>src</Filter>
     </ClInclude>
+    <ClInclude Include="src\Benchmarking\Timer.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="External\AES\src\AES.cpp">
@@ -149,9 +150,6 @@
     <ClCompile Include="src\Core\Encryption\HashingAPI.cpp">
       <Filter>src\Core\Encryption</Filter>
     </ClCompile>
-    <ClCompile Include="src\Core\FilesystemAPI.cpp">
-      <Filter>src\Core</Filter>
-    </ClCompile>
     <ClCompile Include="src\Core\Log.cpp">
       <Filter>src\Core</Filter>
     </ClCompile>
@@ -185,5 +183,9 @@
     <ClCompile Include="src\main.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="src\Core\FilesystemAPI.cpp">
+      <Filter>src\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Benchmarking\Timer.cpp" />
   </ItemGroup>
 </Project>

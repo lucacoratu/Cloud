@@ -8,6 +8,11 @@ class MessageCreator {
 private:
 	Message LastMessage;
 public:
+	//Constructors / Destructors
+	MessageCreator();
+	~MessageCreator();
+
+	//Functions
 	void CreateWelcomeMessage();
 	void CreatePublicKeyMessage(const std::string& publicKey);
 	void CreateReceivedPublicKey();
@@ -15,7 +20,7 @@ public:
 	void CreateRegisterFailedMessage(const ErrorCodes& code);
 	void CreateLoginFailedMessage();
 	void CreateInvalidNumberOfTokensMessage();
-	void CreateMessage(Action action, char errorNo, std::string data);
+	void CreateMessage(Action action, char errorNo, const std::string& data);
 	std::string EncryptMessage(std::string key);
 	const std::string GetLastMessageAsString();
 };

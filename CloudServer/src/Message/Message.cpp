@@ -25,7 +25,7 @@ Message::Message(const Message& other)
 
 Message::~Message()
 {
-
+	this->data.clear();
 }
 
 

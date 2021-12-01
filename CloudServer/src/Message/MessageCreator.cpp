@@ -3,6 +3,16 @@
 
 #include "Core/Encryption/EncryptionAPI.h"
 
+MessageCreator::MessageCreator()
+    : LastMessage(Message())
+{
+}
+
+MessageCreator::~MessageCreator()
+{
+
+}
+
 void MessageCreator::CreateWelcomeMessage()
 {
     /*
@@ -69,7 +79,7 @@ void MessageCreator::CreateInvalidNumberOfTokensMessage()
     LastMessage.SetData(message_data);
 }
 
-void MessageCreator::CreateMessage(Action action, char errorNo, std::string data)
+void MessageCreator::CreateMessage(Action action, char errorNo, const std::string& data)
 {
     /*
     * Creates a message based on the action, error number and data received in the parameters

@@ -6,6 +6,7 @@
 #include "Errors/ErrorCodes.h"
 #include "Core/Encryption/DiffieHellmanAPI.h"
 #include "Core/FilesystemAPI.h"
+#include "Benchmarking/Timer.h"
 
 #include <mutex>
 #include <thread>
@@ -592,6 +593,7 @@ const std::string RequestManager::StartTransmission(uint64_t clientSocket, const
 
 const std::string RequestManager::Acknowledgement(uint64_t clientSocket, const std::string& messageData)
 {
+	Timer timer;
 	MessageCreator message_creator;
 	std::string path = "./entry/" + connectedClients[clientSocket]->GetAccountUsername() + "/" + messageData;
 
@@ -670,7 +672,8 @@ const std::string RequestManager::Acknowledgement(uint64_t clientSocket, const s
 
 	fclose(file);
 	std::string message_data;
-	for (size_t i = 0; i < totalBytesRead; i++)
+	message_data.reserve(totalBytesRead);
+	for (register size_t i = 0; i < totalBytesRead; i++)
 		message_data += buffer[i];
 
 	delete[] buffer;
