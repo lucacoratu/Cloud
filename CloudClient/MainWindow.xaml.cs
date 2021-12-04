@@ -98,7 +98,8 @@ namespace CloudClient
             var ans2 = ServerAPI.ViewDirectoryContents("current");
             */
 
-            var ans3 = ServerAPI.DownloadFile("lab5.pdf", "lab5.pdf");
+            //var ans3 = ServerAPI.DownloadFile("lab5.pdf", "lab5.pdf");
+            var ans = ServerAPI.UploadFile("upload_lab5.pdf", "./lab5.pdf");
         }
         private void VerifyUserInput()
         {

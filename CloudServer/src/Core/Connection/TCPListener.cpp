@@ -259,6 +259,11 @@ void TcpListener::sendToClient(uint64_t clientSocket, std::string& msg, size_t l
 	send(clientSocket, &msg[0], static_cast<int>(length), 0);
 }
 
+void TcpListener::sendToClient(uint64_t clientSocket, std::string_view msg)
+{
+	send(clientSocket, &msg[0], static_cast<int>(msg.size()), 0);
+}
+
 
 void TcpListener::broadcastToClients(uint64_t sendingClient, const char* msg, int length) {
 

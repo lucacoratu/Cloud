@@ -23,6 +23,8 @@ namespace CloudClient
 		RECEIVE_CHUNK,
 		LAST_CHUNK,
 		ACKNOWLEDGEMENT,
+		UPLOAD_FILE,
+		START_UPLOAD,
 	};
 
 }

@@ -118,13 +118,25 @@ void CloudServer::onMessageReceived(uint64_t clientSocket, std::string& msg, int
 		//Client sends the aknowledgement that it received the chunk
 		result = RequestManager::Acknowledgement(clientSocket, message_parser.GetMessageData());
 		break;
+	case Action::UPLOAD_FILE:
+		result = RequestManager::UploadFile(clientSocket, message_parser.GetMessageData());
+		break;
+	case Action::RECEIVE_CHUNK:
+		result = RequestManager::ReceiveChunk(clientSocket, message_parser.GetMessageData());
+		break;
+	case Action::LAST_CHUNK:
+		result = RequestManager::LastChunk(clientSocket, message_parser.GetMessageData());
+		break;
 	default:
 		//The action specified by the client is not a valid one
 		result = RequestManager::UnknownRequest(clientSocket);
 		break;
 	}
 
+	std::string_view view(result.c_str(), result.size());
+
 	//Send the response after finishing the request back to the client
-	this->sendToClient(clientSocket, result, result.size());
+	//this->sendToClient(clientSocket, result, result.size());
+	this->sendToClient(clientSocket, view);
 }
 //-----------------------------------------------------------------------------------------------------------

@@ -48,6 +48,15 @@ const FileCursor ClientData::GetFileCursor(std::string filename) const
 	return cursor;
 }
 
+const bool ClientData::IsFileInUploadList(const std::string& filename)
+{
+	for (auto& file : this->filesToUpload)	{
+		if (file == filename)
+			return true;
+	}
+	return false;
+}
+
 bool ClientData::SupportsEncryption()
 {
 	/*
@@ -105,5 +114,20 @@ void ClientData::IncrementChunkNumber(std::string filename)
 	for (size_t i = 0; i < this->filesToDownload.size(); i++) {
 		if (this->filesToDownload[i].filename == filename)
 			this->filesToDownload[i].fileChunkNumber++;
+	}
+}
+
+void ClientData::AddUploadFile(const std::string& filename)
+{
+	this->filesToUpload.push_back(filename);
+}
+
+void ClientData::EraseUploadFile(const std::string& filename)
+{
+	for (size_t i = 0; i < this->filesToUpload.size(); i++) {
+		if (this->filesToUpload[i] == filename) {
+			this->filesToUpload.erase(this->filesToUpload.begin() + i);
+			return;
+		}
 	}
 }

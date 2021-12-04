@@ -8,7 +8,7 @@ namespace CloudClient.src.Encryption
 {
     class EncryptionAPI
     {
-        public static byte[] EncryptStringToBytes(string plainText, byte[] Key, byte[] IV)
+        public static byte[] EncryptBytes(byte[] plainText, byte[] Key, byte[] IV)
         {
             // Check arguments.
             if (plainText == null || plainText.Length <= 0)
@@ -35,21 +35,16 @@ namespace CloudClient.src.Encryption
                 {
                     using (CryptoStream csEncrypt = new CryptoStream(msEncrypt, encryptor, CryptoStreamMode.Write))
                     {
-                        using (StreamWriter swEncrypt = new StreamWriter(csEncrypt))
-                        {
-
-                            //Write all data to the stream.
-                            swEncrypt.Write(plainText);
-                        }
-                        encrypted = msEncrypt.ToArray();
+                        csEncrypt.Write(plainText, 0, plainText.Length);
+                        csEncrypt.Close();
                     }
+                    encrypted = msEncrypt.ToArray();
                 }
             }
 
 
             // Return the encrypted bytes from the memory stream.
             return encrypted;
-
         }
 
         public static byte[] DecryptStringFromBytes(byte[] cipherText, byte[] Key, byte[] IV)

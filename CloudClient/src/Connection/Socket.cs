@@ -113,11 +113,15 @@ namespace CloudClient.src.Connection
                 byte[] iv = { 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff };
 
                 // Encrypt the string to an array of bytes.
-                encrypted = Encryption.EncryptionAPI.EncryptStringToBytes(System.Text.Encoding.UTF8.GetString(data, 0, dataLength), secret, iv);
+                encrypted = Encryption.EncryptionAPI.EncryptBytes(data, secret, iv);
 
                 byte[] answer = new byte[32768];
                 Array.Clear(answer, 0, 32768);
-                stream.Write(encrypted, 0, encrypted.Length);
+                if(encrypted.Length > 32768)
+                    stream.Write(encrypted, 0, 32768);
+                else
+                    stream.Write(encrypted, 0, encrypted.Length);
+
                 int bytesRead = stream.Read(answer, 0, 32768);
 
                 byte[] cypherText = new byte[bytesRead];

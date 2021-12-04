@@ -38,6 +38,9 @@ public:
 	static const std::string Acknowledgement(uint64_t clientSocket, const std::string& messageData);
 
 	//Upload functions
+	static const std::string UploadFile(uint64_t clientSocket, const std::string& messageData);
+	static const std::string ReceiveChunk(uint64_t clientSocket, const std::string& messageData);
+	static const std::string LastChunk(uint64_t clientSocket, const std::string& messageData);
 
 	//Accessors
 	static bool ClientSupportsEncryption(uint64_t clientSocket);

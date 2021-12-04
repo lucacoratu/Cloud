@@ -6,6 +6,8 @@
 #include "Core/Database/DatabaseAPI.h"
 #include "Core/FilesystemAPI.h"
 
+#include <string_view>
+
 class TcpListener
 {
 
@@ -48,6 +50,9 @@ protected:
 
 	//Sending message to a client
 	void sendToClient(uint64_t clientSocket, std::string& msg, size_t length);
+
+	//Sending message to a client
+	void sendToClient(uint64_t clientSocket, std::string_view msg);
 
 	//Sending message to all clients
 	void broadcastToClients(uint64_t sendingClient, const char* msg, int length);

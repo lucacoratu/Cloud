@@ -19,6 +19,7 @@ std::map<uint64_t, ClientData*> RequestManager::connectedClients;
 
 static std::mutex download_mutex;
 static std::mutex file_mutex;
+static std::mutex upload_mutex;
 
 const std::string RequestManager::NewClientConnected(uint64_t clientSocket)
 {
@@ -608,9 +609,11 @@ const std::string RequestManager::Acknowledgement(uint64_t clientSocket, const s
 	{
 		SV_INFO("Client, socket: {0}, download completed for file: {1}!", clientSocket, path);
 		message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(0), "Download completed!");
-		std::string message_client = message_creator.GetLastMessageAsString();
+		std::string message_client;
 		if (connectedClients[clientSocket]->SupportsEncryption() == true)
 			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		else
+			message_client = message_creator.GetLastMessageAsString();
 
 		//Clear the download files list
 		std::unique_lock<std::mutex> list_lock(download_mutex);
@@ -641,19 +644,24 @@ const std::string RequestManager::Acknowledgement(uint64_t clientSocket, const s
 
 		fclose(file);
 		std::string message_data;
-		for (size_t i = 0; i < totalBytesRead; i++) {
-			message_data += buffer[i];
-		}
+		//for (size_t i = 0; i < totalBytesRead; i++) {
+		//	message_data += buffer[i];
+		//}
+		message_data.append(buffer, totalBytesRead);
 
 		delete[] buffer;
 
 		connectedClients[clientSocket]->IncrementChunkNumber(path);
 		message_creator.CreateMessage(Action::LAST_CHUNK, static_cast<char>(0), message_data);
-		std::string message_client = message_creator.GetLastMessageAsString();
+		std::string message_client;
+		message_client.reserve(totalBytesRead + 6);
 		if (connectedClients[clientSocket]->SupportsEncryption() == true)
 			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		else
+			message_client = message_creator.GetLastMessageAsString();
 		return message_client;
 	}
+
 
 	std::unique_lock<std::mutex> file_lock(file_mutex);
 	//Send next chunk message
@@ -673,18 +681,204 @@ const std::string RequestManager::Acknowledgement(uint64_t clientSocket, const s
 	fclose(file);
 	std::string message_data;
 	message_data.reserve(totalBytesRead);
-	for (register size_t i = 0; i < totalBytesRead; i++)
+	/*for (register size_t i = 0; i < totalBytesRead; i++)
 		message_data += buffer[i];
+		*/
+	message_data.append(buffer, totalBytesRead);
 
 	delete[] buffer;
 
 	connectedClients[clientSocket]->IncrementChunkNumber(path);
 
 	message_creator.CreateMessage(Action::RECEIVE_CHUNK, static_cast<char>(0), message_data);
-	std::string message_client = message_creator.GetLastMessageAsString();
+	std::string message_client;
+	message_client.reserve(totalBytesRead + 6);
 	if (connectedClients[clientSocket]->SupportsEncryption() == true)
 		message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+	else
+		message_client = message_creator.GetLastMessageAsString();
 
+	return message_client;
+}
+
+const std::string RequestManager::UploadFile(uint64_t clientSocket, const std::string& messageData)
+{
+	/*
+	* Prepares the data structures for uploading files
+	* Checks if the file it wants to upload into isn't already in the download files list
+	* If it is then the upload is declined
+	* If it isn't then the upload can continue
+	*/
+	MessageCreator message_creator;
+
+	std::string path = "./entry/" + connectedClients[clientSocket]->GetAccountUsername() + "/" + messageData;
+
+	SV_INFO("Client, socket: {0}, requested to upload a file: {1}!", clientSocket, path);
+	FileCursor cursor;
+	{
+		std::unique_lock<std::mutex> lock(file_mutex);
+		cursor = connectedClients[clientSocket]->GetFileCursor(path);
+	}
+
+	if (cursor.filename != "" && cursor.totalNumberChunks != 0) {
+		//The file is already in the download list
+		SV_WARN("Client,socket: {0}, requested to upload in a file that is in the download list! {1}", clientSocket, path);
+		message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::FILE_IN_DOWNLOAD_LIST), "The file is currently unavailable for upload!");
+		std::string message_client;
+		if (connectedClients[clientSocket]->SupportsEncryption() == true)
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		else
+			message_client = message_creator.GetLastMessageAsString();
+
+		return message_client;
+	}
+
+	{
+		std::unique_lock<std::mutex> lock(file_mutex);
+		if (FilesystemAPI::ExistsFile(path) == false) {
+			FilesystemAPI::CreateNewFile(path);
+		}
+		else {
+			//Truncate the file to size 0;
+			std::ofstream out(path);
+			out.close();
+		}
+
+		connectedClients[clientSocket]->AddUploadFile(path);
+	}
+
+	message_creator.CreateMessage(Action::START_UPLOAD, static_cast<char>(ErrorCodes::NO_ERROR_FOUND), "You can request to start upload!");
+	std::string message_client;
+	if (connectedClients[clientSocket]->SupportsEncryption() == true)
+		message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+	else
+		message_client = message_creator.GetLastMessageAsString();
+
+	return message_client;
+}
+
+
+const std::string RequestManager::ReceiveChunk(uint64_t clientSocket, const std::string& messageData)
+{
+	/*
+	* Receives a chunk from a file
+	* The file path relative to the user directory should be found in the first part of the message
+	* Until the delimiter
+	*/
+	Timer timer;
+	MessageCreator message_creator;
+	std::string filename;
+	size_t chunk_pos = 0;
+	char delim = ' ';
+	for (size_t i = 0; i < messageData.size() && messageData[i] != delim; i++) {
+		filename += messageData[i];
+		chunk_pos = i + 2;
+	}
+
+	std::string path;
+	if(filename[0] < 127 && filename[0] >= 32)
+		path = "./entry/" + connectedClients[clientSocket]->GetAccountUsername() + "/" + filename;
+	else
+		path = "./entry/" + connectedClients[clientSocket]->GetAccountUsername() + "/" + filename.substr(2);
+	
+	{
+		std::unique_lock<std::mutex> lock(upload_mutex);
+		if (!connectedClients[clientSocket]->IsFileInUploadList(path)) {
+			SV_WARN("Client, socket: {0}, requested to send chunk of a file that is not in list, {1}!", clientSocket, path);
+			std::string message_client;
+			message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::FILE_NOT_IN_LIST), "File is not in upload list!");
+			if (connectedClients[clientSocket]->SupportsEncryption() == true)
+				message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+			else
+				message_client = message_creator.GetLastMessageAsString();
+			return message_client;
+		}
+	}
+
+	//Take the chunk and append it in the file
+	size_t bytesToWrite = messageData.size() - chunk_pos;
+	std::unique_lock<std::mutex> lock(file_mutex);
+	FILE* file = fopen(path.c_str(), "ab");
+
+	size_t totalBytesWritten = 0;
+	do {
+		size_t bytesWritten = fwrite(&messageData[chunk_pos] + totalBytesWritten, sizeof(char), bytesToWrite - totalBytesWritten, file);
+		if (bytesWritten < 0)
+			break;
+		totalBytesWritten += bytesWritten;
+	} while (totalBytesWritten < bytesToWrite);
+
+	fclose(file);
+
+	std::string message_client;
+	message_creator.CreateMessage(Action::ACKNOWLEDGEMENT, static_cast<char>(ErrorCodes::NO_ERROR_FOUND), "Acknowledged!");
+	if (connectedClients[clientSocket]->SupportsEncryption() == true)
+		message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+	else
+		message_client = message_creator.GetLastMessageAsString();
+	return message_client;
+}
+
+const std::string RequestManager::LastChunk(uint64_t clientSocket, const std::string& messageData)
+{
+	/*
+	* Receives the last chunk from a file
+	* If the file is in the list then append the last chunk and after that clean up clientData upload list
+	* Else return an error message
+	*/
+	MessageCreator message_creator;
+	std::string filename;
+	size_t chunk_pos = 0;
+	char delim = ' ';
+	for (size_t i = 0; i < messageData.size() && messageData[i] != delim; i++) {
+		filename += messageData[i];
+		chunk_pos = i + 2;
+	}
+
+	std::string path;
+	if (filename[0] < 127 && filename[0] >= 32)
+		path = "./entry/" + connectedClients[clientSocket]->GetAccountUsername() + "/" + filename;
+	else
+		path = "./entry/" + connectedClients[clientSocket]->GetAccountUsername() + "/" + filename.substr(2);
+
+	{
+		std::unique_lock<std::mutex> lock(upload_mutex);
+		if (!connectedClients[clientSocket]->IsFileInUploadList(path)) {
+			SV_WARN("Client, socket: {0}, requested to send last chunk to a file that is not in list, {1}!", clientSocket, path);
+			std::string message_client;
+			message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::FILE_NOT_IN_LIST), "File is not in upload list!");
+			if (connectedClients[clientSocket]->SupportsEncryption() == true)
+				message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+			else
+				message_client = message_creator.GetLastMessageAsString();
+			return message_client;
+		}
+	}
+
+	SV_INFO("Client, socket: {0}, finished upload in file: {1}!", clientSocket, path);
+
+	//Take the chunk and append it in the file
+	size_t bytesToWrite = messageData.size() - chunk_pos;
+	std::unique_lock<std::mutex> lock(file_mutex);
+	FILE* file = fopen(path.c_str(), "ab");
+	size_t totalBytesWritten = 0;
+	do {
+		size_t bytesWritten = fwrite(&messageData[chunk_pos + totalBytesWritten], sizeof(char), bytesToWrite - totalBytesWritten, file);
+		if (bytesWritten < 0)
+			break;
+		totalBytesWritten += bytesWritten;
+	} while (totalBytesWritten < bytesToWrite);
+
+	fclose(file);
+
+	connectedClients[clientSocket]->EraseUploadFile(path);
+
+	std::string message_client;
+	message_creator.CreateMessage(Action::ACKNOWLEDGEMENT, static_cast<char>(ErrorCodes::NO_ERROR_FOUND), "Acknowledged!");
+	if (connectedClients[clientSocket]->SupportsEncryption() == true)
+		message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+	else
+		message_client = message_creator.GetLastMessageAsString();
 	return message_client;
 }
 

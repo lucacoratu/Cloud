@@ -20,6 +20,7 @@ private:
 
 	//The files he wants to download
 	std::vector<FileCursor> filesToDownload;
+	std::vector<std::string> filesToUpload;
 
 	//Diffie-Hellman variables
 	std::string secret;
@@ -35,6 +36,7 @@ public:
 	const std::string GetAccountUsername() const;
 	const std::string GetActiveDirectory() const;
 	const FileCursor GetFileCursor(std::string filename) const;
+	const bool IsFileInUploadList(const std::string& filename);
 	bool SupportsEncryption();
 
 	//Modifiers
@@ -45,6 +47,8 @@ public:
 	void AddDownloadFile(std::string filename);
 	void EraseDownloadFile(std::string filename);
 	void IncrementChunkNumber(std::string filename);
+	void AddUploadFile(const std::string& filename);
+	void EraseUploadFile(const std::string& filename);
 
 };
 
