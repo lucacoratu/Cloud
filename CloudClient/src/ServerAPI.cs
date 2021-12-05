@@ -91,7 +91,7 @@ namespace CloudClient.src
             Message server_answer = Socket.GetServerMessage();
             string resp = Encoding.ASCII.GetString(server_answer.GetMessageData());
 
-            MessageBox.Show(resp);
+            //MessageBox.Show(resp);
 
             if (resp == "There are 0 files in this directory!")
                 return list;
@@ -127,7 +127,7 @@ namespace CloudClient.src
             Message server_answer = Socket.GetServerMessage();
             string resp = Encoding.ASCII.GetString(server_answer.GetMessageData());
 
-            MessageBox.Show(resp);
+           // MessageBox.Show(resp);
 
             return resp;
         }
@@ -149,7 +149,7 @@ namespace CloudClient.src
             Message server_answer = Socket.GetServerMessage();
             string resp = Encoding.ASCII.GetString(server_answer.GetMessageData());
 
-            MessageBox.Show(resp);
+            //MessageBox.Show(resp);
 
             return resp;
         }
@@ -171,7 +171,7 @@ namespace CloudClient.src
             Message server_answer = Socket.GetServerMessage();
             string resp = Encoding.ASCII.GetString(server_answer.GetMessageData());
 
-            MessageBox.Show(resp);
+            //MessageBox.Show(resp);
 
             return resp;
         }

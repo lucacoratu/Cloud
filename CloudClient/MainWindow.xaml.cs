@@ -27,6 +27,7 @@ namespace CloudClient
     {
         private LoginView loginView;
         private RegisterView registerView;
+        private MainView mainView;
         public MainWindow()
         {
             InitializeComponent();
@@ -82,11 +83,19 @@ namespace CloudClient
         private void SwitchToMainView(object sender, RoutedEventArgs e)
         {
             mainGrid.Children.Clear();
+            mainView = new MainView();
+            mainGrid.Children.Add(mainView);
         }
 
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             string answer = ServerAPI.LoginIntoAccount(this.loginView.usernameInput.Text, this.loginView.passwordInput.Password);
+            if (answer == "Login successful")
+            {
+                SwitchToMainView(sender, e);
+                Application.Current.MainWindow.Width = 900;
+                Application.Current.MainWindow.Height = 600;
+            }
             //MessageBox.Show(answer);
             //var resp = ServerAPI.ViewDirectoryContents("current");
             //var resp = ServerAPI.CreateNewFile("testClient.txt");
@@ -99,7 +108,7 @@ namespace CloudClient
             */
 
             //var ans3 = ServerAPI.DownloadFile("lab5.pdf", "lab5.pdf");
-            var ans = ServerAPI.UploadFile("upload_lab5.pdf", "./lab5.pdf");
+            //var ans = ServerAPI.UploadFile("upload_lab5.pdf", "./lab5.pdf");
         }
         private void VerifyUserInput()
         {

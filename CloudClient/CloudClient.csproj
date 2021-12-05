@@ -50,6 +50,7 @@
     <Compile Include="MVVM\ViewModel\LoginViewModel.cs" />
     <Compile Include="MVVM\ViewModel\MainViewModel.cs" />
     <Compile Include="MVVM\View\LoginView.xaml.cs" />
+    <Compile Include="MVVM\View\MainView.xaml.cs" />
     <Compile Include="MVVM\View\RegisterView.xaml.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
