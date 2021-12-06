@@ -28,6 +28,7 @@ public:
 
 	//Working with files functions
 	static const std::string ChangeDirectory(uint64_t clientSocket, const std::string& messageData);
+	static const std::string ChangeDirectoryPath(uint64_t clientSocket, const std::string& messageData);
 	static const std::string CreateNewDirectory(uint64_t clientSocket, const std::string& messageData);
 	static const std::string CreateNewFile(uint64_t clientSocket, const std::string& messageData);
 	static const std::string ViewDirectoryContent(uint64_t clientSocket, const std::string& messageData);

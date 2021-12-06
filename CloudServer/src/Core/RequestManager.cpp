@@ -346,6 +346,46 @@ const std::string RequestManager::ChangeDirectory(uint64_t clientSocket, const s
 	return message_client;
 }
 
+const std::string RequestManager::ChangeDirectoryPath(uint64_t clientSocket, const std::string& messageData)
+{
+	/*
+	* Changes the current directory of the client with the one specified in the messageData
+	* If the directory does not exits then the request fails
+	*/
+	
+	MessageCreator message_creator;
+
+	std::string path = "";
+	if (messageData == "home")
+		path = "./entry/" + connectedClients[clientSocket]->GetAccountUsername() + "/";
+	else
+		path = "./entry/" + connectedClients[clientSocket]->GetAccountUsername() + "/" + messageData;
+	
+	if (!FilesystemAPI::ExistsDirectory(path)) {
+		SV_WARN("Client, socket: {0}, requested to change the current directory to an inexistent directory: {1}!", clientSocket, path);
+		message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::INEXISTENT_DIRECTORY), "Directory does not exist!");
+		std::string message_client = "";
+		if (connectedClients[clientSocket]->SupportsEncryption())
+			message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+		else
+			message_client = message_creator.GetLastMessageAsString();
+		return message_client;
+	}
+
+	//Change the current directory
+	SV_INFO("Client, socket: {0}, changed the current directory: {1}", clientSocket, path);
+	connectedClients[clientSocket]->ChangeCurrentDirectory(path);
+
+	message_creator.CreateMessage(Action::NO_ACTION, static_cast<char>(ErrorCodes::NO_ERROR_FOUND), "Changed the current directory!");
+	std::string message_client = "";
+	if (connectedClients[clientSocket]->SupportsEncryption())
+		message_client = message_creator.EncryptMessage(connectedClients[clientSocket]->GetSecret());
+	else
+		message_client = message_creator.GetLastMessageAsString();
+
+	return message_client;
+}
+
 const std::string RequestManager::CreateNewDirectory(uint64_t clientSocket, const std::string& messageData)
 {
 	/*

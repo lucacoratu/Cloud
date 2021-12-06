@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
-VisualStudioVersion = 16.0.31702.278
+VisualStudioVersion = 16.0.31911.196
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CloudClient", "CloudClient\CloudClient.csproj", "{1BC014B9-8775-8DAE-106A-87857C1E84B2}"
 EndProject
@@ -18,8 +18,8 @@ Global
 		{1BC014B9-8775-8DAE-106A-87857C1E84B2}.Debug|x64.Build.0 = Debug|Any CPU
 		{1BC014B9-8775-8DAE-106A-87857C1E84B2}.Distribution|x64.ActiveCfg = Distribution|x64
 		{1BC014B9-8775-8DAE-106A-87857C1E84B2}.Distribution|x64.Build.0 = Distribution|x64
-		{1BC014B9-8775-8DAE-106A-87857C1E84B2}.Release|x64.ActiveCfg = Release|Any CPU
-		{1BC014B9-8775-8DAE-106A-87857C1E84B2}.Release|x64.Build.0 = Release|Any CPU
+		{1BC014B9-8775-8DAE-106A-87857C1E84B2}.Release|x64.ActiveCfg = Release|x64
+		{1BC014B9-8775-8DAE-106A-87857C1E84B2}.Release|x64.Build.0 = Release|x64
 		{33D5EDDD-9F8A-66D3-287F-60AA94335DD7}.Debug|x64.ActiveCfg = Debug|x64
 		{33D5EDDD-9F8A-66D3-287F-60AA94335DD7}.Debug|x64.Build.0 = Debug|x64
 		{33D5EDDD-9F8A-66D3-287F-60AA94335DD7}.Distribution|x64.ActiveCfg = Distribution|x64
@@ -31,6 +31,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {2906E0E1-CA23-4FA7-B3DF-ABCA70445B38}
+		SolutionGuid = {5DB37277-E8A5-4775-8EDA-D97F8DCB41B4}
 	EndGlobalSection
 EndGlobal

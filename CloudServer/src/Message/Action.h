@@ -20,6 +20,7 @@ enum class Action {
 	ACKNOWLEDGEMENT,
 	UPLOAD_FILE,
 	START_UPLOAD,
+	CHANGE_DIRECTORY_FULL_PATH,
 };
 
 #endif

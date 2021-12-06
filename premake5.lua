@@ -88,7 +88,8 @@ project "CloudClient"
 	{
 		"%{prj.location}/Icons/*.png",
 		"%{prj.location}/*.cs",
-		"%{prj.location}/src/**.cs"
+		"%{prj.location}/src/**.cs",
+		"%{prj.location}/MVVM/**.cs"
 	}
 
 	filter "configurations:Debug"

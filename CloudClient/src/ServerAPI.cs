@@ -176,6 +176,29 @@ namespace CloudClient.src
             return resp;
         }
 
+        public static string ChangeDirectoryFullPath(string directoryPath)
+        {
+            /*
+             * Send a request to the server to change the current directory to the directory path
+             * Directory path is relative to the home directory
+             */
+            MessageHeader header = new MessageHeader();
+            header.action = (byte)Action.CHANGE_DIRECTORY_FULL_PATH;
+            header.errorNo = (byte)0;
+            header.dataLength = (int)(directoryPath.Length);
+
+            Message message = new Message(header, Encoding.ASCII.GetBytes(directoryPath));
+            byte[] server_message = message.GetMessageAsByteArray();
+            Socket.SendToServer(server_message, server_message.Length);
+
+            Message server_answer = Socket.GetServerMessage();
+            string resp = Encoding.ASCII.GetString(server_answer.GetMessageData());
+
+            //MessageBox.Show(resp);
+
+            return resp;
+        }
+
         public static string DownloadFile(string filename, string localFilename)
         {
             //Clear the local filename if it exists

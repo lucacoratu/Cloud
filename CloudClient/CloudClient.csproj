@@ -38,20 +38,29 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Icons\home.png" />
-    <None Remove="Icons\window_icon.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
+    <None Include="Icons\cloud.png" />
+    <None Include="Icons\home.png" />
+    <None Include="Icons\register.png" />
+    <None Include="Icons\window_icon.png" />
+    <Compile Include="MVVM\View\LoginView.xaml.cs">
+      <DependentUpon>LoginView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MVVM\View\MainView.xaml.cs">
+      <DependentUpon>MainView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="MVVM\View\RegisterView.xaml.cs">
+      <DependentUpon>RegisterView.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="MVVM\ViewModel\LoginViewModel.cs" />
     <Compile Include="MVVM\ViewModel\MainViewModel.cs" />
-    <Compile Include="MVVM\View\LoginView.xaml.cs" />
-    <Compile Include="MVVM\View\MainView.xaml.cs" />
-    <Compile Include="MVVM\View\RegisterView.xaml.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -64,14 +73,6 @@
     <Compile Include="src\ServerAPI.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Icons\home.png" />
-    <Resource Include="Icons\window_icon.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Core\" />
-    <Folder Include="MVVM\Model\" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="MahApps.Metro.IconPacks.Material" Version="4.11.0" />
+    <PackageReference Include="MahApps.Metro.IconPacks" Version="4.11.0" />
   </ItemGroup>
 </Project>

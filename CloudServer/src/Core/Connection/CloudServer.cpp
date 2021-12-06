@@ -119,13 +119,20 @@ void CloudServer::onMessageReceived(uint64_t clientSocket, std::string& msg, int
 		result = RequestManager::Acknowledgement(clientSocket, message_parser.GetMessageData());
 		break;
 	case Action::UPLOAD_FILE:
+		//Client wants to upload a file
 		result = RequestManager::UploadFile(clientSocket, message_parser.GetMessageData());
 		break;
 	case Action::RECEIVE_CHUNK:
+		//Client sends a chunk of the file
 		result = RequestManager::ReceiveChunk(clientSocket, message_parser.GetMessageData());
 		break;
 	case Action::LAST_CHUNK:
+		//Client sends the last chunk of the file
 		result = RequestManager::LastChunk(clientSocket, message_parser.GetMessageData());
+		break;
+	case Action::CHANGE_DIRECTORY_FULL_PATH:
+		//Client wants to change the current directory with a path relative to its home directory
+		result = RequestManager::ChangeDirectoryPath(clientSocket, message_parser.GetMessageData());
 		break;
 	default:
 		//The action specified by the client is not a valid one

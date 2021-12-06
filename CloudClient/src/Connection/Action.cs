@@ -25,6 +25,7 @@ namespace CloudClient
 		ACKNOWLEDGEMENT,
 		UPLOAD_FILE,
 		START_UPLOAD,
+		CHANGE_DIRECTORY_FULL_PATH,
 	};
 
 }
