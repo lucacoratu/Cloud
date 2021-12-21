@@ -90,6 +90,7 @@ namespace CloudClient
         private void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             string answer = ServerAPI.LoginIntoAccount(this.loginView.usernameInput.Text, this.loginView.passwordInput.Password);
+            //string answer2 = ServerAPI.DownloadFile("lab5.pdf", "download_lab5.pdf");
             if (answer == "Login successful")
             {
                 SwitchToMainView(sender, e);

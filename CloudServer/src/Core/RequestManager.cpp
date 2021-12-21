@@ -15,6 +15,7 @@
 
 #define BUFFER_SIZE 32762
 
+
 std::map<uint64_t, ClientData*> RequestManager::connectedClients;
 
 static std::mutex download_mutex;

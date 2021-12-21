@@ -12,19 +12,49 @@
             <ColumnDefinition Width="0.75*"/>
         </Grid.ColumnDefinitions>
 
-        <Expander Grid.Column="0"
+
+        <Grid Grid.Column="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.75*"/>
+                <RowDefinition Height="0.25*"/>
+            </Grid.RowDefinitions>
+
+            <Expander Grid.Row="0"
                   x:Name="Home"
                   Header="Home"
                   Expanded="DirectoryExpanded">
-            
-        </Expander>
-        
+
+            </Expander>
+
+            <Expander Grid.Row="1"
+                  x:Name="Downloads"
+                  Header="Downloads"
+                Expanded="DirectoryExpanded">
+                <StackPanel x:Name="DownloadsStackPannel"/>
+            </Expander>
+        </Grid>
 
 
 
-        <StackPanel x:Name="stackPannel" 
-            Grid.Column="1">
-            
-        </StackPanel>
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.05*"/>
+                <RowDefinition Height="0.95*"/>
+            </Grid.RowDefinitions>
+
+            <Button x:Name="GoBackButton"
+                    Grid.Row="0"
+                    Width="20" Height="20"
+                    HorizontalAlignment="Left"
+                    Content="←" Click="GoBackButton_Click"
+                    Foreground="White"
+                    Background="Transparent"/>
+
+            <StackPanel x:Name="stackPannel"
+                        Grid.Row="1">
+
+            </StackPanel>
+        </Grid>
+
     </Grid>
 </UserControl>

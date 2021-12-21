@@ -208,7 +208,10 @@ namespace CloudClient.src
             }
             else
             {
-                File.Create(localFilename);
+                using (FileStream fs = File.Create(localFilename))
+                {
+                    //you can use the filstream here to put stuff in the file if you want to
+                }
             }
 
             MessageHeader header_download = new MessageHeader();

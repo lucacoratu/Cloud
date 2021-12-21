@@ -1,6 +1,8 @@
 #include "cloudpch.h"
 #include "ClientData.h"
 
+#define BUFFER_SIZE 32762
+
 ClientData::ClientData(const std::string publicKey, const std::string privateKey)
 	: publicKey(publicKey), privateKey(privateKey)
 {
@@ -96,7 +98,7 @@ void ClientData::AddDownloadFile(std::string filename)
 	in.seekg(0, in.beg);
 
 	//Calculate the number of chunks it has
-	uint32_t totalNumberChunks = length / 4090;
+	uint32_t totalNumberChunks = length / BUFFER_SIZE;
 
 	this->filesToDownload.push_back({ filename, 0, totalNumberChunks });
 }

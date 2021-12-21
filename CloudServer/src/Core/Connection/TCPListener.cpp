@@ -17,6 +17,7 @@ static std::thread thread_pool[4];
 
 //Mutex for the message queue
 static std::mutex mutex;
+static std::mutex socket_mutex;
 
 //Condition variable
 static std::condition_variable condition_var;
@@ -252,15 +253,18 @@ int TcpListener::run()
 //Send the message to the client
 void TcpListener::sendToClient(uint64_t clientSocket, const char* msg, size_t length)
 {
+	std::unique_lock<std::mutex> lock(socket_mutex);
 	send(clientSocket, msg, static_cast<int>(length), 0);
 }
 
 void TcpListener::sendToClient(uint64_t clientSocket, std::string& msg, size_t length) {
+	std::unique_lock<std::mutex> lock(socket_mutex);
 	send(clientSocket, &msg[0], static_cast<int>(length), 0);
 }
 
 void TcpListener::sendToClient(uint64_t clientSocket, std::string_view msg)
 {
+	std::unique_lock<std::mutex> lock(socket_mutex);
 	send(clientSocket, &msg[0], static_cast<int>(msg.size()), 0);
 }
 

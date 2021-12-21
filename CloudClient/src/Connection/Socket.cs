@@ -6,6 +6,7 @@ using System.Windows;
 using CloudClient.src.Connection;
 using CloudClient.src.Encryption;
 using System.Security.Cryptography;
+using System.Threading;
 using CloudClient.src;
 
 namespace CloudClient.src.Connection
@@ -18,6 +19,8 @@ namespace CloudClient.src.Connection
         static Byte[] serverAnswer;
         static Byte[] secret;
         static Message serverMessage;
+
+        static Mutex socket_mutex = new Mutex();
 
         static private string ByteArrayToHexString(byte[] Bytes)
         {
@@ -115,6 +118,7 @@ namespace CloudClient.src.Connection
                 // Encrypt the string to an array of bytes.
                 encrypted = Encryption.EncryptionAPI.EncryptBytes(data, secret, iv);
 
+                socket_mutex.WaitOne();
                 byte[] answer = new byte[32768];
                 Array.Clear(answer, 0, 32768);
                 if(encrypted.Length > 32768)
@@ -129,6 +133,8 @@ namespace CloudClient.src.Connection
                 {
                     cypherText[i] = answer[i];
                 }
+
+                socket_mutex.ReleaseMutex();
 
                 serverAnswer = Encryption.EncryptionAPI.DecryptStringFromBytes(cypherText, secret, iv);
                 //Create a message from the server answer

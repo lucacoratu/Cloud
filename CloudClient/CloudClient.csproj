@@ -43,6 +43,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="src\ThreadManager.cs" />
     <None Include="Icons\cloud.png" />
     <None Include="Icons\home.png" />
     <None Include="Icons\register.png" />
