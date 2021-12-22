@@ -6,6 +6,7 @@ using CloudClient.src.Encryption;
 using System.Windows;
 using System.Windows.Controls;
 using System.IO;
+using Microsoft.Toolkit.Uwp.Notifications;
 
 namespace CloudClient.src
 {
@@ -127,7 +128,7 @@ namespace CloudClient.src
             Message server_answer = Socket.GetServerMessage();
             string resp = Encoding.ASCII.GetString(server_answer.GetMessageData());
 
-           // MessageBox.Show(resp);
+            // MessageBox.Show(resp);
 
             return resp;
         }
@@ -268,7 +269,13 @@ namespace CloudClient.src
                 server_answer2 = Socket.GetServerMessage();
                 resp2 = Encoding.ASCII.GetString(server_answer2.GetMessageData());
 
-                //MessageBox.Show(resp2);
+                new ToastContentBuilder()
+                    .AddText("Completed download for file!")
+                    .AddText("You can view the file in " + localFilename)
+                    .Show(toast =>
+                    {
+                        toast.ExpirationTime = DateTime.Now.AddSeconds(1.5);
+                    });
                 return resp2;
             }
 
@@ -316,7 +323,13 @@ namespace CloudClient.src
             server_answer3 = Socket.GetServerMessage();
             resp3 = Encoding.ASCII.GetString(server_answer3.GetMessageData());
 
-            MessageBox.Show(resp3);
+            new ToastContentBuilder()
+                    .AddText("Completed download for file!")
+                    .AddText("You can view the file in " + localFilename)
+                    .Show(toast =>
+                    {
+                        toast.ExpirationTime = DateTime.Now.AddSeconds(1.5);
+                    });
             return resp2;
         }
 
@@ -335,7 +348,7 @@ namespace CloudClient.src
             Socket.SendToServer(message_upload_bytes, message_upload_bytes.Length);
 
             Message server_upload_response = Socket.GetServerMessage();
-            if(server_upload_response.GetMessageAction() == (byte)Action.START_UPLOAD)
+            if (server_upload_response.GetMessageAction() == (byte)Action.START_UPLOAD)
             {
                 //Start the upload
                 FileInfo info = new FileInfo(localFilename);
@@ -344,7 +357,7 @@ namespace CloudClient.src
 
                 long current_chunk = 0;
 
-                if(number_chunks == 0)
+                if (number_chunks == 0)
                 {
                     byte[] data = File.ReadAllBytes(localFilename);
 
@@ -378,7 +391,7 @@ namespace CloudClient.src
                     Socket.SendToServer(server_bytes, server_bytes.Length - 1);
 
                     Message server_last_chunk_response = Socket.GetServerMessage();
-                    if(server_last_chunk_response.GetMessageAction() == (byte)Action.ACKNOWLEDGEMENT)
+                    if (server_last_chunk_response.GetMessageAction() == (byte)Action.ACKNOWLEDGEMENT)
                     {
                         string resp = "Upload completed";
                         MessageBox.Show(resp);
@@ -406,7 +419,7 @@ namespace CloudClient.src
 
                         byte[] filename_space = new byte[serverFilename.Length + 2];
                         byte[] filename = Encoding.ASCII.GetBytes(serverFilename);
-                        for(int i =0; i < filename.Length; i++)
+                        for (int i = 0; i < filename.Length; i++)
                         {
                             filename_space[i] = filename[i];
                         }
@@ -421,7 +434,7 @@ namespace CloudClient.src
 
                         for (int i = 0; i < data.Length; i++)
                         {
-                            server_data[filename.Length + 1 + i] = data[i];       
+                            server_data[filename.Length + 1 + i] = data[i];
                         }
 
                         MessageHeader header_chunk = new MessageHeader();
@@ -479,7 +492,7 @@ namespace CloudClient.src
                     Socket.SendToServer(server_bytes_last, server_bytes_last.Length);
 
                     Message server_answer_last = Socket.GetServerMessage();
-                    if(server_answer_last.GetMessageAction() == (byte)Action.ACKNOWLEDGEMENT)
+                    if (server_answer_last.GetMessageAction() == (byte)Action.ACKNOWLEDGEMENT)
                     {
                         string resp2 = "Upload completed!";
                         MessageBox.Show(resp2);

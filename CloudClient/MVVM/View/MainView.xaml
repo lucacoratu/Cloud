@@ -51,7 +51,8 @@
                     Background="Transparent"/>
 
             <StackPanel x:Name="stackPannel"
-                        Grid.Row="1">
+                        Grid.Row="1" Drop="UploadFile"
+                        AllowDrop="True">
 
             </StackPanel>
         </Grid>
